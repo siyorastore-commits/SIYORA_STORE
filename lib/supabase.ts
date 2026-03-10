@@ -1,0 +1,69 @@
+import { createClient } from "@supabase/supabase-js";
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+// ─── DB HELPERS ──────────────────────────────────────────────────────────────
+
+export async function saveOrder(orderData: {
+  customer_name: string;
+  customer_email: string;
+  customer_phone: string;
+  shipping_address: object;
+  items: object[];
+  total_amount: number;
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  payment_status: string;
+  order_status: string;
+}) {
+  const { data, error } = await supabase
+    .from("orders")
+    .insert([orderData])
+    .select()
+    .single();
+
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function getOrderById(id: string) {
+  const { data, error } = await supabase
+    .from("orders")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+/*
+─── SUPABASE SQL SCHEMA ─────────────────────────────────────────────────────
+Run this in your Supabase SQL Editor:
+
+create table orders (
+  id uuid default gen_random_uuid() primary key,
+  created_at timestamp with time zone default now(),
+  customer_name text not null,
+  customer_email text not null,
+  customer_phone text not null,
+  shipping_address jsonb not null,
+  items jsonb not null,
+  total_amount integer not null,
+  razorpay_order_id text,
+  razorpay_payment_id text,
+  payment_status text default 'pending',
+  order_status text default 'confirmed'
+);
+
+-- Enable Row Level Security
+alter table orders enable row level security;
+
+-- Allow insert from API (server-side only via service_role key)
+create policy "Allow server inserts" on orders
+  for insert with check (true);
+─────────────────────────────────────────────────────────────────────────────
+*/
