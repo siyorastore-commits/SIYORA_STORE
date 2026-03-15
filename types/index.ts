@@ -7,12 +7,20 @@ export interface ProductMedia {
   poster?: string;   // for video thumbnail
 }
 
+export interface ReviewItem {
+  name: string;
+  city: string;
+  rating: number;
+  text: string;
+  date: string;
+}
+
 export interface Product {
   id: number;
   name: string;
   price: number;
   originalPrice: number;
-  category: "kurtis" | "sets";
+  category: "kurtis" | "sets" | "dresses";
   tag: string;
   rating: number;
   reviews: number;
@@ -27,6 +35,8 @@ export interface Product {
   media: ProductMedia[];
   highlights?: string[];
   deliveryDays?: string;
+  outOfStock?: boolean;
+  reviewsList?: ReviewItem[];
 }
 
 export interface CartItem extends Product {

@@ -13,11 +13,7 @@ export default function Footer() {
             <p style={{ fontSize: 14, color: "rgba(255,255,255,0.4)", lineHeight: 1.8, maxWidth: 260, fontWeight: 300 }}>
               Where Siya Meets Street. Handcrafted fashion for the modern Indian woman.
             </p>
-            <div style={{ display: "flex", gap: 12, marginTop: 28 }}>
-              {["📸", "💬", "📌", "▶"].map((icon, i) => (
-                <div key={i} className="social-btn">{icon}</div>
-              ))}
-            </div>
+        
           </div>
 
           {/* Shop */}
@@ -48,7 +44,7 @@ export default function Footer() {
                 <li key={l}><Link href="/about" className="footer-link">{l}</Link></li>
               ))}
             </ul>
-            <div style={{ marginTop: 28 }}>
+            {/* <div style={{ marginTop: 28 }}>
               <h4 style={{ fontFamily: "var(--serif)", fontSize: 16, fontWeight: 600, marginBottom: 12, color: "white" }}>Newsletter</h4>
               <div style={{ display: "flex", gap: 8 }}>
                 <input
@@ -57,7 +53,7 @@ export default function Footer() {
                 />
                 <button style={{ background: "var(--pink)", color: "white", border: "none", borderRadius: 10, padding: "10px 16px", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>→</button>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
 

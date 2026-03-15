@@ -14,7 +14,7 @@ export default function ContactPage() {
       <section style={{ padding: "80px 5%", maxWidth: 900, margin: "0 auto" }}>
         {/* Contact cards */}
         <div className="contact-cards-grid">
-          {[["📱", "WhatsApp Us", "Chat with us directly for the quickest help with orders and queries.", "+91 98765 43210"], ["✉️", "Email Us", "For orders, returns, sizing questions, or just to say hi!", "hello@siyora.in"], ["📸", "Instagram", "DM us or tag us in your Siyora looks. We repost our favourites!", "@siyora.official"], ["🕐", "Working Hours", "We're available Monday to Saturday. We rest on Sundays!", "Mon–Sat: 10am–7pm"]].map(([icon, title, text, detail]) => (
+          {[["📱", "WhatsApp Us", "Chat with us directly for the quickest help with orders and queries.", "+91 6280636359"], ["✉️", "Email Us", "For orders, returns, sizing questions, or just to say hi!", "siyora.store@gmail.com"], ["📸", "Instagram", "DM us or tag us in your Siyora looks. We repost our favourites!", "@siyora.in"], ["🕐", "Working Hours", "We're available Monday to Saturday. We rest on Sundays!", "Mon–Sat: 10am–7pm"]].map(([icon, title, text, detail]) => (
             <div key={title} style={{ background: "white", borderRadius: 20, padding: 36, textAlign: "center", border: "1px solid var(--border)", transition: "all 0.3s" }}>
               <div style={{ fontSize: 44, marginBottom: 16 }}>{icon}</div>
               <div style={{ fontFamily: "var(--serif)", fontSize: 22, fontWeight: 700, marginBottom: 8 }}>{title}</div>
@@ -28,7 +28,7 @@ export default function ContactPage() {
         <div style={{ background: "white", borderRadius: 24, padding: 40, border: "1px solid var(--border)" }}>
           <h3 style={{ fontFamily: "var(--serif)", fontSize: 28, fontWeight: 700, marginBottom: 24 }}>Send a Message</h3>
           <div className="contact-form-grid">
-            {[["Name", "text", "Your name"], ["Email", "email", "your@email.com"], ["Phone", "tel", "+91 98765 43210"]].map(([label, type, ph]) => (
+            {[["Name", "text", "Your name"], ["Email", "email", "your@email.com"], ["Phone", "tel", "+91 6280636359"]].map(([label, type, ph]) => (
               <div key={label} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                 <label className="form-label">{label}</label>
                 <input className="form-input" type={type} placeholder={ph} />

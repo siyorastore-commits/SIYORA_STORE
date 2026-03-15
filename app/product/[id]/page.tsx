@@ -190,13 +190,13 @@ function SizeGuide({ onClose }: { onClose: () => void }) {
         <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14 }}>
           <thead>
             <tr style={{ background: "var(--blush)" }}>
-              {["Size", "Chest (in)", "Waist (in)", "Hip (in)", "Length (in)"].map((h) => (
+              {["Size", "Bust (in)", "Waist (in)", "Hip (in)",].map((h) => (
                 <th key={h} style={{ padding: "12px 16px", textAlign: "left", fontWeight: 600, fontSize: 11, letterSpacing: 1, textTransform: "uppercase", color: "var(--muted)" }}>{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {[["XS", "32", "26", "34", "44"], ["S", "34", "28", "36", "44"], ["M", "36", "30", "38", "45"], ["L", "38", "32", "40", "45"], ["XL", "40", "34", "42", "46"], ["XXL", "42", "36", "44", "46"]].map(([size, ...vals], i) => (
+            {[["XS", "32-33", "26-28", "36-38",], ["S", "34-35","28-30","38-40"], ["M", "36-37","30-32","40-42"], ["L", "38-39","34-36","42-44"], ["XL", "40-42","38-40","44-46"]].map(([size, ...vals], i) => (
               <tr key={size} style={{ borderBottom: "1px solid var(--border)", background: i % 2 === 0 ? "white" : "var(--cream)" }}>
                 <td style={{ padding: "12px 16px", fontWeight: 700, color: "var(--pink)" }}>{size}</td>
                 {vals.map((v, j) => <td key={j} style={{ padding: "12px 16px", color: "var(--dark)" }}>{v}"</td>)}
@@ -214,11 +214,7 @@ function SizeGuide({ onClose }: { onClose: () => void }) {
 
 // ─── Reviews Section ──────────────────────────────────────────────────────────
 function ReviewsSection({ product }: { product: Product }) {
-  const fakeReviews = [
-    { name: "Priya M.", rating: 5, date: "2 weeks ago", text: "Absolutely love this! The quality is so much better than what I expected. Fits perfectly and the fabric is so soft.", size: "M", verified: true },
-    { name: "Sneha K.", rating: 5, date: "1 month ago", text: "Wore this to a family function and got so many compliments. The colour is exactly as shown. Very happy with the purchase!", size: "L", verified: true },
-    { name: "Ritu A.", rating: 4, date: "3 weeks ago", text: "Beautiful piece, great quality. Shipping was fast too. Only giving 4 stars because I wish it came in more colours!", size: "S", verified: true },
-  ];
+  const reviews = product.reviewsList ?? [];
 
   const ratingDist = [5, 4, 3, 2, 1];
   const counts = [70, 20, 6, 3, 1];
@@ -250,20 +246,19 @@ function ReviewsSection({ product }: { product: Product }) {
 
         {/* Reviews list */}
         <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-          {fakeReviews.map((r, i) => (
+          {reviews.map((r, i) => (
             <div key={i} style={{ background: "white", borderRadius: 20, padding: 28, border: "1px solid var(--border)" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
                 <div>
                   <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
                     <div style={{ width: 36, height: 36, borderRadius: "50%", background: "linear-gradient(135deg,var(--pink),var(--coral))", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontFamily: "var(--serif)", fontSize: 16, fontWeight: 700 }}>{r.name[0]}</div>
                     <span style={{ fontWeight: 600, fontSize: 15 }}>{r.name}</span>
-                    {r.verified && <span style={{ background: "rgba(34,197,94,0.1)", color: "#16A34A", fontSize: 10, padding: "2px 8px", borderRadius: 50, fontWeight: 600 }}>✓ Verified</span>}
+                    <span style={{ fontSize: 12, color: "var(--muted)" }}>{r.city}</span>
                   </div>
                   <div style={{ color: "#F59E0B", fontSize: 14 }}>{"★".repeat(r.rating)}{"☆".repeat(5 - r.rating)}</div>
                 </div>
                 <div style={{ textAlign: "right" }}>
                   <div style={{ fontSize: 12, color: "var(--muted)" }}>{r.date}</div>
-                  <div style={{ fontSize: 11, color: "var(--muted)", marginTop: 2 }}>Size: {r.size}</div>
                 </div>
               </div>
               <p style={{ fontSize: 14, color: "var(--muted)", lineHeight: 1.8 }}>{r.text}</p>
@@ -443,18 +438,19 @@ export default function ProductPage({ params }: { params: { id: string } }) {
             {/* Add to cart + Buy now */}
             <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
               <button
-                onClick={handleAdd}
+                onClick={product.outOfStock ? undefined : handleAdd}
+                disabled={!!product.outOfStock}
                 style={{
                   flex: 1,
-                  background: addedToCart ? "#22C55E" : "var(--pink)",
-                  color: "white", padding: "18px 32px", borderRadius: 14,
+                  background: product.outOfStock ? "#D1D5DB" : addedToCart ? "#22C55E" : "var(--pink)",
+                  color: product.outOfStock ? "#9CA3AF" : "white", padding: "18px 32px", borderRadius: 14,
                   fontSize: 12, letterSpacing: "2.5px", fontWeight: 700, textTransform: "uppercase",
-                  border: "none", cursor: "pointer", transition: "all 0.3s",
+                  border: "none", cursor: product.outOfStock ? "not-allowed" : "pointer", transition: "all 0.3s",
                   transform: addedToCart ? "none" : undefined,
-                  boxShadow: "0 8px 30px rgba(233,30,140,0.25)",
+                  boxShadow: product.outOfStock ? "none" : "0 8px 30px rgba(233,30,140,0.25)",
                 }}
               >
-                {addedToCart ? "✓ Added to Bag!" : `Add to Bag — ₹${(product.price * qty).toLocaleString()}`}
+                {product.outOfStock ? "Out of Stock" : addedToCart ? "✓ Added to Bag!" : `Add to Bag — ₹${(product.price * qty).toLocaleString()}`}
               </button>
               <Link
                 href="/checkout"
@@ -471,7 +467,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
 
             {/* Trust badges */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-              {[["🚀", "Ships in 24-48 hrs", "via Shiprocket"], ["🔒", "Secure payments", "via Razorpay"], ["🏆", "Authentic quality", "Guaranteed"], ["📦", "All sales final", "No returns/exchanges"]].map(([icon, title, sub]) => (
+              {[["🚀", "Ships in 6-7 Days", "via Shiprocket"], ["🔒", "Secure payments", "via Razorpay"], ["🏆", "Authentic quality", "Guaranteed"], ["📦", "All sales final", "No returns"]].map(([icon, title, sub]) => (
                 <div key={title} style={{ display: "flex", gap: 12, alignItems: "center", background: "white", borderRadius: 12, padding: "14px 16px", border: "1px solid var(--border)" }}>
                   <span style={{ fontSize: 22 }}>{icon}</span>
                   <div>
@@ -559,10 +555,10 @@ function ProductAccordion({ product }: { product: Product }) {
       content: (
         <div style={{ display: "flex", flexDirection: "column", gap: 14, fontSize: 14, color: "var(--muted)", lineHeight: 1.8 }}>
           <div>🚀 <strong style={{ color: "var(--dark)" }}>Delivery:</strong> {product.deliveryDays} business days via Shiprocket. Free shipping on orders above ₹999.</div>
-          <div>📦 <strong style={{ color: "var(--dark)" }}>Dispatch:</strong> Orders are dispatched within 24–48 hours of placement.</div>
+          <div>📦 <strong style={{ color: "var(--dark)" }}>Dispatch:</strong> Orders are dispatched within 3-4 days of placement.</div>
           <div>📍 <strong style={{ color: "var(--dark)" }}>Ships to:</strong> All of India. International shipping coming soon.</div>
           <div style={{ background: "rgba(239,68,68,0.06)", borderRadius: 10, padding: "12px 14px", border: "1px solid rgba(239,68,68,0.15)" }}>
-            ⚠ <strong style={{ color: "var(--dark)" }}>Returns &amp; Exchanges:</strong> We currently do not support returns or exchanges. Please review your size carefully before ordering.
+            ⚠ <strong style={{ color: "var(--dark)" }}>Returns &amp; Exchanges:</strong> We currently do not support returns . Please review your size carefully before ordering. Exchanges allowed only if product is defective.
           </div>
         </div>
       ),

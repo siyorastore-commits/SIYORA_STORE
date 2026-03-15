@@ -101,7 +101,7 @@ export async function sendOrderConfirmationEmail({
           ["✅", "Order Confirmed", "Right now"],
           ["📦", "Packed & Dispatched", "Within 24–48 hours"],
           ["🚀", "Shipped via Shiprocket", "You'll get a tracking link"],
-          ["🏠", "Delivered to You", "3–5 business days"],
+          ["🏠", "Delivered to You", "6–7 business days"],
         ]
           .map(
             ([icon, title, time]) => `
@@ -125,7 +125,7 @@ export async function sendOrderConfirmationEmail({
 
     <!-- Footer -->
     <div style="background:#180A08;padding:32px 40px;text-align:center">
-      <p style="color:rgba(255,255,255,0.5);font-size:12px;margin:0 0 8px">Follow us @siyora.official</p>
+      <p style="color:rgba(255,255,255,0.5);font-size:12px;margin:0 0 8px">Follow us @siyora.in</p>
       <p style="color:rgba(255,255,255,0.3);font-size:11px;margin:0">© 2025 Siyora. Made with ❤️ in India.</p>
     </div>
   </div>

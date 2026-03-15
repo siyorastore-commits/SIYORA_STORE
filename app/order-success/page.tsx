@@ -26,7 +26,7 @@ export default function OrderSuccessPage({
 
         {/* Steps */}
         <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 36, textAlign: "left" }}>
-          {[["✅", "Order Confirmed", "Right now"], ["📦", "Packing Your Order", "Within 24 hours"], ["🚀", "Shipped via Shiprocket", "You'll receive a tracking link"], ["🏠", "Delivered to You", "3–5 business days"]].map(([icon, title, time]) => (
+          {[["✅", "Order Confirmed", "Right now"], ["📦", "Packing Your Order", "Within 24 hours"], ["🚀", "Shipped via Shiprocket", "You'll receive a tracking link"], ["🏠", "Delivered to You", "6-7 business days"]].map(([icon, title, time]) => (
             <div key={title} style={{ display: "flex", alignItems: "center", gap: 14, padding: 14, background: "var(--cream)", borderRadius: 12, border: "1px solid var(--border)" }}>
               <span style={{ fontSize: 22 }}>{icon}</span>
               <div>
@@ -47,7 +47,7 @@ export default function OrderSuccessPage({
         </div>
 
         <p style={{ marginTop: 28, fontSize: 13, color: "var(--muted)" }}>
-          Questions? DM us on Instagram <strong>@siyora.official</strong> or WhatsApp us
+          Questions? DM us on Instagram <strong>@siyora.in</strong> or WhatsApp us
         </p>
       </div>
 

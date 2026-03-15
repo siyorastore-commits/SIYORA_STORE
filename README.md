@@ -118,4 +118,4 @@ After each order is placed, log in to Shiprocket and manually create a shipment 
 ---
 
 ## Support
-Made with ❤️ for Siyora. Questions? hello@siyora.in
+Made with ❤️ for Siyora. Questions? siyora.store@gmail.com

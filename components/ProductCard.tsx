@@ -31,12 +31,32 @@ export default function ProductCard({ product, onQuickView, delay = 0 }: Props) 
             <img
               src={firstImageSrc}
               alt={product.name}
-              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: product.outOfStock ? 0.55 : 1 }}
             />
           ) : (
-            <span className="p-card-emoji">{product.emoji}</span>
+            <span className="p-card-emoji" style={{ opacity: product.outOfStock ? 0.55 : 1 }}>{product.emoji}</span>
           )}
           <span className={`p-card-tag ${tagClass[product.tag] || ""}`}>{product.tag}</span>
+          {product.outOfStock && (
+            <div style={{
+              position: "absolute", inset: 0,
+              display: "flex", alignItems: "center", justifyContent: "center",
+            }}>
+              <span style={{
+                background: "rgba(20,20,20,0.72)",
+                color: "white",
+                fontSize: 10,
+                letterSpacing: "3px",
+                fontWeight: 700,
+                textTransform: "uppercase",
+                padding: "8px 18px",
+                borderRadius: 50,
+                backdropFilter: "blur(4px)",
+              }}>
+                Out of Stock
+              </span>
+            </div>
+          )}
         </div>
       </Link>
 

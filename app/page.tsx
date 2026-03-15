@@ -33,7 +33,7 @@ export default function HomePage() {
       <div style={{ maxWidth: 1400, margin: "0 auto", padding: "0 5%" }}>
         <div className="hero" style={{ padding: "0", maxWidth: "none" }}>
           <div className="hero-left">
-            <div className="hero-eyebrow">New Collection 2025</div>
+            <div className="hero-eyebrow">New Collection 2026</div>
             <h1 className="hero-title">
               Where <em>Siya</em>
               <br />
@@ -48,7 +48,7 @@ export default function HomePage() {
               <Link href="/about" className="btn-outline">Our Story</Link>
             </div>
             <div className="hero-stats">
-              {[["2,000+", "Happy Customers"], ["50+", "Unique Designs"], ["4.8★", "Average Rating"]].map(([num, label]) => (
+              {[["500+", "Happy Customers"], ["20+", "Unique Designs"], ["4.8★", "Average Rating"]].map(([num, label]) => (
                 <div key={label}>
                   <div className="hero-stat-num">{num}</div>
                   <div className="hero-stat-label">{label}</div>
@@ -151,7 +151,7 @@ export default function HomePage() {
             <div className="story-cards">
               {PRODUCTS.slice(4, 8).map((p) => (
                 <div key={p.id} className="story-card" style={{ background: p.bgColor }}>
-                  <span style={{ fontSize: 70 }}>{p.emoji}</span>
+                  <img  src={p?.media?.[0]?.src || ""} />
                 </div>
               ))}
             </div>
@@ -210,7 +210,7 @@ export default function HomePage() {
         <div className="banner-section">
           <div style={{ position: "relative", zIndex: 1 }}>
             <h2 style={{ fontFamily: "var(--serif)", fontSize: "clamp(36px,5vw,56px)", fontWeight: 700, color: "white", lineHeight: 1.05, marginBottom: 12 }}>
-              New arrivals<br />every Friday
+              New arrivals<br />every Month
             </h2>
             <p style={{ fontSize: 15, color: "rgba(255,255,255,0.8)", fontWeight: 300 }}>
               Follow us on Instagram for first looks & exclusive drops

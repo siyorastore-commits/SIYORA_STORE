@@ -9,7 +9,7 @@ export default function AboutPage() {
           Siyora
         </div>
         <div style={{ maxWidth: 1400, margin: "0 auto", textAlign: "center", position: "relative", zIndex: 2 }}>
-          <span style={{ fontSize: 10, letterSpacing: "5px", color: "var(--coral)", textTransform: "uppercase", fontWeight: 600, display: "block", marginBottom: 20 }}>Est. 2024</span>
+          <span style={{ fontSize: 10, letterSpacing: "5px", color: "var(--coral)", textTransform: "uppercase", fontWeight: 600, display: "block", marginBottom: 20 }}>Est. 2025</span>
           <h1 style={{ fontFamily: "var(--serif)", fontSize: "clamp(52px,8vw,100px)", fontWeight: 700, color: "white", lineHeight: 0.9, marginBottom: 24 }}>
             Where <em style={{ color: "var(--pink)", fontStyle: "italic" }}>Siya</em><br />Meets Street
           </h1>
@@ -34,7 +34,7 @@ export default function AboutPage() {
 
         {/* Values */}
         <div className="about-values-grid">
-          {[["🌿", "Ethical Sourcing", "We partner only with artisans who share our values of fair wages and sustainable practices."], ["💫", "Inclusive Sizing", "Sizes XS to XXL because beauty has no size and every woman deserves to feel seen."], ["📦", "Thoughtful Packaging", "100% recyclable packaging because we love this planet as much as we love fashion."]].map(([icon, title, text]) => (
+          {[["🌿", "Ethical Sourcing", "We partner only with artisans who share our values of fair wages and sustainable practices."], ["💫", "Inclusive Sizing", "Sizes XS to XL because beauty has no size and every woman deserves to feel seen."], ["📦", "Thoughtful Packaging", "100% recyclable packaging because we love this planet as much as we love fashion."]].map(([icon, title, text]) => (
             <div key={title} style={{ background: "white", borderRadius: 24, padding: 36, border: "1px solid var(--border)", transition: "all 0.3s" }}>
               <div style={{ fontSize: 40, marginBottom: 16 }}>{icon}</div>
               <div style={{ fontFamily: "var(--serif)", fontSize: 22, fontWeight: 700, marginBottom: 10 }}>{title}</div>
@@ -45,7 +45,7 @@ export default function AboutPage() {
 
         {/* Numbers */}
         <div className="about-stats-grid">
-          {[["2,000+", "Happy Customers"], ["50+", "Unique Designs"], ["100%", "Handcrafted"], ["4.8★", "Avg Rating"]].map(([num, label]) => (
+          {[["500+", "Happy Customers"], ["20+", "Unique Designs"], ["100%", "Handcrafted"], ["4.8★", "Avg Rating"]].map(([num, label]) => (
             <div key={label} style={{ textAlign: "center" }}>
               <div style={{ fontFamily: "var(--serif)", fontSize: 40, fontWeight: 700, color: "white", lineHeight: 1 }}>{num}</div>
               <div style={{ fontSize: 11, letterSpacing: 2, color: "rgba(255,255,255,0.7)", textTransform: "uppercase", marginTop: 8 }}>{label}</div>

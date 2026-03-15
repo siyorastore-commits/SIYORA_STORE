@@ -188,10 +188,11 @@ export default function ProductModal({ product, onClose }: Props) {
           </p>
 
           <button
-            onClick={handleAdd}
+            onClick={product.outOfStock ? undefined : handleAdd}
+            disabled={!!product.outOfStock}
             style={{
-              background: added ? "#22C55E" : "var(--pink)",
-              color: "white",
+              background: product.outOfStock ? "#D1D5DB" : added ? "#22C55E" : "var(--pink)",
+              color: product.outOfStock ? "#9CA3AF" : "white",
               padding: "18px 32px",
               borderRadius: 14,
               fontSize: 12,
@@ -200,7 +201,7 @@ export default function ProductModal({ product, onClose }: Props) {
               textTransform: "uppercase",
               transition: "all 0.3s",
               border: "none",
-              cursor: "pointer",
+              cursor: product.outOfStock ? "not-allowed" : "pointer",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -208,7 +209,7 @@ export default function ProductModal({ product, onClose }: Props) {
               marginTop: 8,
             }}
           >
-            {added ? "✓ Added to Bag!" : "Add to Bag"}
+            {product.outOfStock ? "Out of Stock" : added ? "✓ Added to Bag!" : "Add to Bag"}
           </button>
         </div>
       </div>
