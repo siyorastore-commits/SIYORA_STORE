@@ -1,6 +1,107 @@
 import { Product } from "@/types";
 
 export const PRODUCTS: Product[] = [
+    {
+    id: 0.5,
+    name: "Taara",
+    price: 799,
+    originalPrice: 999,
+    category: "tops",
+    tag: "NEW",
+    rating: 5,
+    reviews: 3,
+    sizes: ["XS", "S", "M", "L", "XL"],
+    colors: [],
+    description: `Taara Pure Cotton Floral Tie-Up Top
+
+Stay effortlessly stylish with the Taara Pure Cotton Top, crafted from 100% breathable cotton for all-day comfort. Designed with a rich green base and vibrant red floral prints, it brings a fresh, elegant vibe to your look.
+
+The chic front cut-out with adjustable tie-up detail adds a modern, feminine touch, while the soft fabric ensures a flattering and easy fit—perfect for casual outings and everyday wear.
+
+Key Features:
+
+100% Pure Cotton – soft & breathable
+
+Floral print on deep green base
+
+Front cut-out with tie-up detail
+
+Comfortable, flattering fit
+
+Pair it with denim or skirts for a relaxed yet stylish outfit.
+
+Care: Machine wash cold, gentle cycle.`,
+    longDescription: `**Taara Pure Cotton Floral Tie-Up Top**
+
+Elevate your everyday style with the *Taara Pure Cotton Top*—a perfect blend of comfort, charm, and effortless elegance. Crafted from 100% breathable cotton, this top is designed to keep you cool and comfortable all day long.
+
+Featuring a rich deep green base adorned with vibrant red floral prints, Taara brings a refreshing, nature-inspired aesthetic to your wardrobe. The standout front cut-out detail with delicate tie-up strings adds a touch of modern femininity, making it both stylish and unique. The soft, lightweight fabric gently hugs the body while allowing ease of movement, making it ideal for casual outings, brunch dates, or relaxed evenings.
+
+**Key Features:**
+
+* 🌿 **Fabric:** 100% Pure Cotton – soft, breathable & skin-friendly
+* 🌺 **Design:** Bold floral print on a rich green base
+* 🎀 **Detailing:** Stylish front cut-out with adjustable tie-up
+* 👕 **Fit:** Comfortable, flattering silhouette
+* ☀️ **Occasion:** Perfect for casual wear, day outings, and summer styling
+
+Pair it effortlessly with your favorite denim or skirts for a chic, laid-back look. The Taara top is where comfort meets statement style.
+
+Add a fresh floral flair to your wardrobe with *Taara*! 🌸
+`,
+    fabric: "100% Cotton",
+    care: "Machine wash cold, gentle cycle. Do not bleach. Iron at low heat.",
+    emoji: "🌸",
+    bgColor: "#FFE8EE",
+    highlights: ["Breathable","Floral","Elegant","Lightweight"],
+    deliveryDays: "6-7",
+   reviewsList: [
+  {
+    name: "Riya K.",
+    city: "Mumbai",
+    rating: 5,
+    text: "Absolutely love this top! The cotton fabric is super breathable and perfect for Mumbai weather. The tie-up detail adds such a cute touch. Got so many compliments!",
+    date: "Feb 2026",
+  },
+  {
+    name: "Simran B.",
+    city: "Chandigarh",
+    rating: 4,
+    text: "The floral print is even prettier in person. It fits really well and feels very comfortable for all-day wear. Great for casual outings.",
+    date: "Jan 2026",
+  },
+  {
+    name: "Mehak A.",
+    city: "Hyderabad",
+    rating: 5,
+    text: "Wore this for a brunch and it looked amazing with jeans. The fabric is soft and lightweight, and the front detail makes it stand out.",
+    date: "Mar 2026",
+  },
+],
+    media: [
+      {
+        type: "image",
+        src: "https://res.cloudinary.com/dghggvtdn/image/upload/v1773851617/ukuoe3mx6uilmr8we2oy_m1bo15.png",
+        alt: "",
+        emoji: "🌸",
+        bg: "#FFE8EE",
+      },
+      {
+        type: "image",
+        src: "https://res.cloudinary.com/dghggvtdn/image/upload/v1773851626/syzeue0sm6dufacuhnxc_u6wmfp.png",
+        alt: "TAAARA",
+        emoji: "🌸",
+        bg: "#EEC8D0",
+      },
+      {
+        type: "image",
+        src: "https://res.cloudinary.com/dghggvtdn/image/upload/v1773851620/ex2a5gm473xy86lmfvl9_pmkkkq.png",
+        alt: "TAARA",
+        emoji: "🌸",
+        bg: "#FFD5E0",
+      },
+    ],
+  },
   {
     id: 1,
     name: "Cherry Blossom Kurti",
@@ -872,9 +973,12 @@ and Back zip | Sleeves [IF REQUIRED]`,
 
 export const CATEGORIES = [
   { id: "all", label: "All Styles", count: 12 },
+  
   { id: "kurtis", label: "Kurtis", count: 8 },
+    { id: "tops", label: "Tops", count: 1 },
   { id: "sets", label: "Co-ord Sets", count: 2 },
   { id: "dresses", label: "Jhilmil Dresses", count: 2 },
+  
 ];
 
 export const TESTIMONIALS = [
