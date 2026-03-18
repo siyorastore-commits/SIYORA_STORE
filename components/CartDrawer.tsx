@@ -38,8 +38,12 @@ export default function CartDrawer() {
           ) : (
             cartItems.map((item) => (
               <div key={item.cartId} style={{ display: "flex", gap: 16, padding: "18px 0", borderBottom: "1px solid var(--border)", alignItems: "flex-start" }}>
-                <div style={{ width: 80, height: 100, borderRadius: 12, background: item.bgColor, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 36, flexShrink: 0 }}>
-                  {item.emoji}
+                <div style={{ width: 80, height: 100, borderRadius: 12, background: item.bgColor, overflow: "hidden", flexShrink: 0 }}>
+                  {item.media?.[0]?.src ? (
+                    <img src={item.media[0].src} alt={item.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  ) : (
+                    <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 36 }}>{item.emoji}</div>
+                  )}
                 </div>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontFamily: "var(--serif)", fontSize: 17, fontWeight: 600, marginBottom: 4 }}>{item.name}</div>

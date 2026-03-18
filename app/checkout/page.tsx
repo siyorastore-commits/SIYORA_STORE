@@ -59,7 +59,7 @@ const errorAnim = {
 export default function CheckoutPage() {
   const { cartItems, cartTotal, clearCart } = useCart();
   const router = useRouter();
-  const shipping = cartTotal >= 999 ? 0 : 10;
+  const shipping = cartTotal >= 999 ? 0 : 70;
   const grandTotal = cartTotal + shipping;
 
   const [form, setForm] = useState<OrderForm>({
@@ -436,14 +436,15 @@ export default function CheckoutPage() {
                         height: 76,
                         borderRadius: 12,
                         background: item.bgColor,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        fontSize: 28,
+                        overflow: "hidden",
                         flexShrink: 0,
                       }}
                     >
-                      {item.emoji}
+                      {item.media?.[0]?.src ? (
+                        <img src={item.media[0].src} alt={item.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                      ) : (
+                        <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28 }}>{item.emoji}</div>
+                      )}
                     </div>
                     <div style={{ flex: 1 }}>
                       <div

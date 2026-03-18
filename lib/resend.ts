@@ -132,10 +132,67 @@ export async function sendOrderConfirmationEmail({
 </body>
 </html>`;
 
-  await resend.emails.send({
-    from: "Siyora Orders <orders@siyora.in>",
-    to,
-    subject: `✨ Order Confirmed! #${orderId} — Siyora`,
-    html,
-  });
+  const notificationHtml = `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="margin:0;padding:0;background:#FEFAF7;font-family:'Georgia',serif">
+  <div style="max-width:600px;margin:32px auto;background:white;border-radius:16px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.08)">
+    <div style="background:linear-gradient(135deg,#E91E8C,#FF6B5B);padding:32px 40px;text-align:center">
+      <h1 style="color:white;font-size:28px;margin:0;font-weight:700">New Order Received!</h1>
+    </div>
+    <div style="padding:32px 40px">
+      <div style="background:#FFE8F0;border-radius:12px;padding:16px;text-align:center;margin-bottom:24px">
+        <p style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#7A5555;margin:0 0 4px">Order ID</p>
+        <p style="font-size:22px;font-weight:700;color:#E91E8C;margin:0">#${orderId}</p>
+      </div>
+      <p style="color:#180A08;font-size:15px;margin:0 0 8px"><strong>Customer:</strong> ${customerName}</p>
+      <p style="color:#180A08;font-size:15px;margin:0 0 8px"><strong>Email:</strong> ${to}</p>
+      <p style="color:#180A08;font-size:15px;margin:0 0 24px"><strong>Total:</strong> ₹${totalAmount.toLocaleString()}</p>
+      <h3 style="font-size:16px;color:#180A08;margin:0 0 12px">Items Ordered</h3>
+      <table style="width:100%;border-collapse:collapse;margin-bottom:24px">
+        <thead>
+          <tr style="border-bottom:2px solid #180A08">
+            <th style="text-align:left;padding-bottom:8px;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#7A5555">Item</th>
+            <th style="text-align:center;padding-bottom:8px;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#7A5555">Qty</th>
+            <th style="text-align:right;padding-bottom:8px;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#7A5555">Price</th>
+          </tr>
+        </thead>
+        <tbody>${items
+          .map(
+            (item) => `
+          <tr>
+            <td style="padding:10px 0;border-bottom:1px solid #F0DDD5">${item.emoji} ${item.name}${item.selectedSize ? ` (${item.selectedSize})` : ""}</td>
+            <td style="padding:10px 0;border-bottom:1px solid #F0DDD5;text-align:center">${item.qty}</td>
+            <td style="padding:10px 0;border-bottom:1px solid #F0DDD5;text-align:right;font-weight:600">₹${(item.price * item.qty).toLocaleString()}</td>
+          </tr>`
+          )
+          .join("")}</tbody>
+      </table>
+      <h3 style="font-size:16px;color:#180A08;margin:0 0 8px">Ship To</h3>
+      <div style="background:#FEFAF7;border-radius:10px;padding:16px;border:1px solid #F0DDD5">
+        <p style="margin:0;color:#7A5555;font-size:14px;line-height:1.8">
+          ${shippingAddress.address}<br>
+          ${shippingAddress.city}, ${shippingAddress.state} — ${shippingAddress.pincode}
+        </p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>`;
+
+  await Promise.all([
+    resend.emails.send({
+      from: "Siyora Orders <onboarding@resend.dev>",
+      to,
+      subject: `✨ Order Confirmed! #${orderId} — Siyora`,
+      html,
+    }),
+    resend.emails.send({
+      from: "Siyora Orders <onboarding@resend.dev>",
+      to: "siyora.store@gmail.com",
+      subject: `🛍️ New Order #${orderId} — ${customerName} (₹${totalAmount.toLocaleString()})`,
+      html: notificationHtml,
+    }),
+  ]);
 }

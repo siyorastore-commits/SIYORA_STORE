@@ -195,8 +195,7 @@ a { text-decoration: none; color: inherit; }
 
 @media (max-width: 768px) {
   .hero-right {
-    height: 320px;
-    max-width: 100%;
+    display: none;
   }
 
   .hero-card-1 {
@@ -332,7 +331,7 @@ footer { background: #180A08; color: white; padding: 80px 5% 32px; }
 @media (max-width: 1100px) { .product-grid { grid-template-columns: repeat(3, 1fr); } }
 @media (max-width: 900px) {
   .hero { grid-template-columns: 1fr; padding-top: 80px; }
-  .hero-right { display: none; }
+  .hero-right { height: 380px; max-width: 100%; }
   .story-inner { grid-template-columns: 1fr; }
   .footer-top { grid-template-columns: 1fr 1fr; }
 }
