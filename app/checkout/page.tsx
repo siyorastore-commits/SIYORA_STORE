@@ -59,7 +59,7 @@ const errorAnim = {
 export default function CheckoutPage() {
   const { cartItems, cartTotal, clearCart } = useCart();
   const router = useRouter();
-  const shipping = cartTotal >= 999 ? 0 : 2;
+  const shipping = cartTotal >= 999 ? 0 : 70;
   const grandTotal = cartTotal + shipping;
 
   const [form, setForm] = useState<OrderForm>({
