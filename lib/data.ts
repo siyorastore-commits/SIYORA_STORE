@@ -4,8 +4,8 @@ export const PRODUCTS: Product[] = [
     {
     id: 0.5,
     name: "Taara",
-    price: 899,
-    originalPrice: 999,
+    price: 1,
+    originalPrice: 1,
     category: "tops",
     tag: "NEW",
     rating: 5,
