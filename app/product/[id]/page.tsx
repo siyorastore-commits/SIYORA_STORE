@@ -1,6 +1,7 @@
 "use client";
 import { useState, useRef } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { notFound } from "next/navigation";
 import { PRODUCTS } from "@/lib/data";
 import { Product } from "@/types";
@@ -281,7 +282,9 @@ export default function ProductPage({ params }: { params: { id: string } }) {
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
   const [modalProduct, setModalProduct] = useState<Product | null>(null);
   const [addedToCart, setAddedToCart] = useState(false);
+  const [copied, setCopied] = useState(false);
   const { addToCart } = useCart();
+  const router = useRouter();
 
   const discount =
     product.originalPrice > product.price
@@ -300,6 +303,20 @@ export default function ProductPage({ params }: { params: { id: string } }) {
     showToast(`${product.name} added to bag!`);
     setAddedToCart(true);
     setTimeout(() => setAddedToCart(false), 2000);
+  };
+
+  const handleBuyNow = () => {
+    const size = selectedSize || product.sizes[1] || "M";
+    for (let i = 0; i < qty; i++) {
+      addToCart(product, size, selectedColor);
+    }
+    router.push("/checkout");
+  };
+
+  const handleShare = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
@@ -435,7 +452,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
               </div>
             </div>
 
-            {/* Add to cart + Buy now */}
+            {/* Add to cart + Buy now + Share */}
             <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
               <button
                 onClick={product.outOfStock ? undefined : handleAdd}
@@ -452,17 +469,31 @@ export default function ProductPage({ params }: { params: { id: string } }) {
               >
                 {product.outOfStock ? "Out of Stock" : addedToCart ? "✓ Added to Bag!" : `Add to Bag — ₹${(product.price * qty).toLocaleString()}`}
               </button>
-              <Link
-                href="/checkout"
+              <button
+                onClick={product.outOfStock ? undefined : handleBuyNow}
+                disabled={!!product.outOfStock}
                 style={{
-                  background: "var(--dark)", color: "white", padding: "18px 28px",
+                  background: product.outOfStock ? "#D1D5DB" : "var(--dark)", color: product.outOfStock ? "#9CA3AF" : "white", padding: "18px 28px",
                   borderRadius: 14, fontSize: 12, letterSpacing: "2px",
                   fontWeight: 700, textTransform: "uppercase", whiteSpace: "nowrap",
-                  display: "flex", alignItems: "center",
+                  display: "flex", alignItems: "center", border: "none", cursor: product.outOfStock ? "not-allowed" : "pointer",
                 }}
               >
                 Buy Now
-              </Link>
+              </button>
+              <button
+                onClick={handleShare}
+                title="Copy product link"
+                style={{
+                  background: copied ? "#22C55E" : "white",
+                  color: copied ? "white" : "var(--dark)",
+                  padding: "18px 20px", borderRadius: 14, fontSize: 18,
+                  border: "1.5px solid var(--border)", cursor: "pointer",
+                  transition: "all 0.3s", display: "flex", alignItems: "center",
+                }}
+              >
+                {copied ? "✓" : "🔗"}
+              </button>
             </div>
 
             {/* Trust badges */}

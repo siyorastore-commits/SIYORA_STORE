@@ -16,7 +16,7 @@ export default function OrderSuccessPage({
           Order Placed!
         </h1>
         <p style={{ fontSize: 15, color: "var(--muted)", lineHeight: 1.8, marginBottom: 32 }}>
-          Thank you for shopping with Siyora! Your order is confirmed and a confirmation email has been sent. We'll ship within 24–48 hours.
+          Thank you for shopping with Siyora! Your order is confirmed. We'll ship within 24–48 hours.
         </p>
 
         <div style={{ background: "var(--blush)", borderRadius: 12, padding: "16px 24px", display: "inline-flex", flexDirection: "column", alignItems: "center", gap: 4, marginBottom: 32 }}>
@@ -41,13 +41,10 @@ export default function OrderSuccessPage({
           <Link href="/shop" style={{ background: "var(--pink)", color: "white", padding: "16px 40px", borderRadius: 50, fontSize: 11, letterSpacing: "2.5px", fontWeight: 600, textTransform: "uppercase" }}>
             Continue Shopping
           </Link>
-          <Link href="/contact" style={{ background: "transparent", color: "var(--dark)", padding: "16px 40px", borderRadius: 50, fontSize: 11, letterSpacing: "2.5px", fontWeight: 600, textTransform: "uppercase", border: "1.5px solid var(--border)" }}>
-            Track Order
-          </Link>
         </div>
 
         <p style={{ marginTop: 28, fontSize: 13, color: "var(--muted)" }}>
-          Questions? DM us on Instagram <strong>@siyora.in</strong> or WhatsApp us
+          For any queries or order tracking details, DM us on Instagram <strong>@siyora.in</strong>
         </p>
       </div>
 
