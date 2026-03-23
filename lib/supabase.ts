@@ -3,7 +3,14 @@ import { createClient } from "@supabase/supabase-js";
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
+// Public client (browser-safe)
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+// Admin client with service role key — bypasses RLS, server-side API routes only
+const supabaseAdmin = createClient(
+  supabaseUrl,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 // ─── DB HELPERS ──────────────────────────────────────────────────────────────
 
@@ -17,7 +24,7 @@ export async function createPendingOrder(orderData: {
   total_amount: number;
   razorpay_order_id: string;
 }) {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from("orders")
     .insert([{
       ...orderData,
@@ -39,7 +46,7 @@ export async function updateOrderAfterPayment(
   paymentStatus: string,
   orderStatus: string,
 ) {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from("orders")
     .update({
       razorpay_payment_id: razorpayPaymentId,
@@ -67,7 +74,7 @@ export async function saveOrder(orderData: {
   payment_status: string;
   order_status: string;
 }) {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from("orders")
     .insert([orderData])
     .select()
@@ -78,7 +85,7 @@ export async function saveOrder(orderData: {
 }
 
 export async function getOrderById(id: string) {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from("orders")
     .select("*")
     .eq("id", id)
