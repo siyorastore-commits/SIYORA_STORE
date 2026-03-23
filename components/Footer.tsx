@@ -30,9 +30,10 @@ export default function Footer() {
           <div>
             <h4 style={{ fontFamily: "var(--serif)", fontSize: 16, fontWeight: 600, marginBottom: 20, color: "white" }}>Help</h4>
             <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 10 }}>
-              {["Track Order", "Size Guide", "Shipping Info", "Contact Us"].map((l) => (
-                <li key={l}><Link href="/contact" className="footer-link">{l}</Link></li>
-              ))}
+              <li><Link href="/contact" className="footer-link">Track Order</Link></li>
+              <li><Link href="/shipping" className="footer-link">Shipping Info</Link></li>
+              <li><Link href="/returns" className="footer-link">Exchange Policy</Link></li>
+              <li><Link href="/contact" className="footer-link">Contact Us</Link></li>
             </ul>
           </div>
 
@@ -40,9 +41,10 @@ export default function Footer() {
           <div>
             <h4 style={{ fontFamily: "var(--serif)", fontSize: 16, fontWeight: 600, marginBottom: 20, color: "white" }}>Company</h4>
             <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 10 }}>
-              {["About Us", "Our Story", "Privacy Policy", "Terms of Service"].map((l) => (
-                <li key={l}><Link href="/about" className="footer-link">{l}</Link></li>
-              ))}
+              <li><Link href="/about" className="footer-link">About Us</Link></li>
+              <li><Link href="/about" className="footer-link">Our Story</Link></li>
+              <li><Link href="/privacy" className="footer-link">Privacy Policy</Link></li>
+              <li><Link href="/terms" className="footer-link">Terms of Service</Link></li>
             </ul>
             {/* <div style={{ marginTop: 28 }}>
               <h4 style={{ fontFamily: "var(--serif)", fontSize: 16, fontWeight: 600, marginBottom: 12, color: "white" }}>Newsletter</h4>

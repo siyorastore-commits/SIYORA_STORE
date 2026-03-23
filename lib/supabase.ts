@@ -7,6 +7,54 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // ─── DB HELPERS ──────────────────────────────────────────────────────────────
 
+/** Called the moment the user clicks Pay — before Razorpay modal opens. */
+export async function createPendingOrder(orderData: {
+  customer_name: string;
+  customer_email: string;
+  customer_phone: string;
+  shipping_address: object;
+  items: object[];
+  total_amount: number;
+  razorpay_order_id: string;
+}) {
+  const { data, error } = await supabase
+    .from("orders")
+    .insert([{
+      ...orderData,
+      razorpay_payment_id: null,
+      payment_status: "pending",
+      order_status: "initiated",
+    }])
+    .select()
+    .single();
+
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+/** Called after payment result — updates the existing pending record. */
+export async function updateOrderAfterPayment(
+  razorpayOrderId: string,
+  razorpayPaymentId: string | null,
+  paymentStatus: string,
+  orderStatus: string,
+) {
+  const { data, error } = await supabase
+    .from("orders")
+    .update({
+      razorpay_payment_id: razorpayPaymentId,
+      payment_status: paymentStatus,
+      order_status: orderStatus,
+    })
+    .eq("razorpay_order_id", razorpayOrderId)
+    .select()
+    .single();
+
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+/** Legacy insert — kept for compatibility. */
 export async function saveOrder(orderData: {
   customer_name: string;
   customer_email: string;

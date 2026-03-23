@@ -4,8 +4,8 @@ export const PRODUCTS: Product[] = [
     {
     id: 0.5,
     name: "Taara",
-    price: 1,
-    originalPrice: 1,
+    price: 899,
+    originalPrice: 999,
     category: "tops",
     tag: "NEW",
     rating: 5,
@@ -77,7 +77,7 @@ Add a fresh floral flair to your wardrobe with *Taara*! 🌸
     text: "Wore this for a brunch and it looked amazing with jeans. The fabric is soft and lightweight, and the front detail makes it stand out.",
     date: "Mar 2026",
   },
-],
+   ],
     media: [
       {
         type: "image",
@@ -1008,7 +1008,6 @@ export const TESTIMONIALS = [
 export const MARQUEE_ITEMS = [
   "FREE SHIPPING ABOVE ₹999",
   "NEW ARRIVALS EVERY MONTH",
-  "EASY 7-DAY RETURNS",
   "WHERE SIYA MEETS STREET",
   "AUTHENTIC INDIAN CRAFTSMANSHIP",
 ];

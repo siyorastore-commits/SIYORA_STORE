@@ -93,11 +93,27 @@ export default function CheckoutPage() {
     }
 
     setLoading(true);
+
+    const orderData = {
+      customer_name: form.name,
+      customer_email: form.email,
+      customer_phone: form.phone,
+      shipping_address: {
+        address: form.address,
+        city: form.city,
+        state: form.state,
+        pincode: form.pincode,
+      },
+      items: cartItems,
+      total_amount: grandTotal,
+    };
+
     try {
       const orderRes = await fetch("/api/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount: grandTotal }),
+        // Pass full orderData so a pending record is saved immediately
+        body: JSON.stringify({ amount: grandTotal, orderData }),
       });
       const { orderId: razorpayOrderId } = await orderRes.json();
 
@@ -118,24 +134,7 @@ export default function CheckoutPage() {
           const verifyRes = await fetch("/api/verify-payment", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              ...response,
-              orderData: {
-                customer_name: form.name,
-                customer_email: form.email,
-                customer_phone: form.phone,
-                shipping_address: {
-                  address: form.address,
-                  city: form.city,
-                  state: form.state,
-                  pincode: form.pincode,
-                },
-                items: cartItems,
-                total_amount: grandTotal,
-                payment_status: "paid",
-                order_status: "confirmed",
-              },
-            }),
+            body: JSON.stringify({ ...response, orderData }),
           });
           const data = await verifyRes.json();
           if (data.success) {
@@ -145,15 +144,23 @@ export default function CheckoutPage() {
             alert("Payment verification failed. Contact support.");
           }
         },
+        modal: {
+          // User closed the Razorpay modal without paying — record stays as "pending"
+          ondismiss: () => {
+            setLoading(false);
+          },
+        },
       };
 
       const rzp = new (window as any).Razorpay(options);
       rzp.open();
     } catch {
       alert("Something went wrong. Please try again.");
-    } finally {
       setLoading(false);
     }
+    // Note: setLoading(false) is NOT in a finally block here intentionally.
+    // The button stays in "Processing…" state while the Razorpay modal is open.
+    // It resets via ondismiss (user closes modal) or after the handler completes.
   };
 
   const fields: [string, keyof OrderForm, string, string, boolean][] = [
