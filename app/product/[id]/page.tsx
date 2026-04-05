@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { PRODUCTS } from "@/lib/data";
 import { Product } from "@/types";
 import { useCart } from "@/context/CartContext";
+import { CustomSize } from "@/types";
 import { showToast } from "@/components/Toast";
 import ProductCard from "@/components/ProductCard";
 import ProductModal from "@/components/ProductModal";
@@ -179,35 +180,115 @@ function MediaViewer({ product }: { product: Product }) {
 }
 
 // ─── Size Guide Modal ─────────────────────────────────────────────────────────
-function SizeGuide({ onClose }: { onClose: () => void }) {
+function SizeGuide({ onClose, onCustomSize }: { onClose: () => void; onCustomSize: (sizes: CustomSize) => void }) {
+  const [tab, setTab] = useState<"chart" | "custom">("chart");
+  const [bust, setBust] = useState("");
+  const [waist, setWaist] = useState("");
+  const [hip, setHip] = useState("");
+  const allFilled = bust.trim() && waist.trim() && hip.trim();
+
+  const handleUseCustom = () => {
+    if (!allFilled) return;
+    onCustomSize({ bust: bust.trim(), waist: waist.trim(), hip: hip.trim() });
+    onClose();
+  };
+
+  const inputStyle = {
+    width: "100%", padding: "12px 14px", borderRadius: 10,
+    border: "1.5px solid var(--border)", fontSize: 14,
+    outline: "none", boxSizing: "border-box" as const,
+    fontFamily: "inherit",
+  };
+
   return (
     <>
       <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 500, backdropFilter: "blur(4px)" }} />
-      <div style={{ position: "fixed", left: "50%", top: "50%", transform: "translate(-50%,-50%)", background: "white", borderRadius: 24, padding: 40, zIndex: 501, width: "min(600px,95vw)", maxHeight: "80vh", overflowY: "auto" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 28 }}>
+      <div style={{ position: "fixed", left: "50%", top: "50%", transform: "translate(-50%,-50%)", background: "white", borderRadius: 24, padding: 40, zIndex: 501, width: "min(600px,95vw)", maxHeight: "85vh", overflowY: "auto" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 24 }}>
           <h3 style={{ fontFamily: "var(--serif)", fontSize: 28, fontWeight: 700 }}>Size Guide</h3>
           <button onClick={onClose} style={{ background: "none", border: "none", fontSize: 20, cursor: "pointer", color: "var(--muted)" }}>✕</button>
         </div>
-        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14 }}>
-          <thead>
-            <tr style={{ background: "var(--blush)" }}>
-              {["Size", "Bust (in)", "Waist (in)", "Hip (in)",].map((h) => (
-                <th key={h} style={{ padding: "12px 16px", textAlign: "left", fontWeight: 600, fontSize: 11, letterSpacing: 1, textTransform: "uppercase", color: "var(--muted)" }}>{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {[["XS", "32-33", "26-28", "36-38",], ["S", "34-35","28-30","38-40"], ["M", "36-37","30-32","40-42"], ["L", "38-39","34-36","42-44"], ["XL", "40-42","38-40","44-46"]].map(([size, ...vals], i) => (
-              <tr key={size} style={{ borderBottom: "1px solid var(--border)", background: i % 2 === 0 ? "white" : "var(--cream)" }}>
-                <td style={{ padding: "12px 16px", fontWeight: 700, color: "var(--pink)" }}>{size}</td>
-                {vals.map((v, j) => <td key={j} style={{ padding: "12px 16px", color: "var(--dark)" }}>{v}"</td>)}
-              </tr>
+
+        {/* Tabs */}
+        <div style={{ display: "flex", gap: 8, marginBottom: 28, background: "var(--blush)", borderRadius: 12, padding: 4 }}>
+          {(["chart", "custom"] as const).map((t) => (
+            <button
+              key={t}
+              onClick={() => setTab(t)}
+              style={{
+                flex: 1, padding: "10px 0", borderRadius: 9, border: "none", cursor: "pointer",
+                fontWeight: 600, fontSize: 13, letterSpacing: 0.5, transition: "all 0.2s",
+                background: tab === t ? "white" : "transparent",
+                color: tab === t ? "var(--dark)" : "var(--muted)",
+                boxShadow: tab === t ? "0 2px 8px rgba(0,0,0,0.08)" : "none",
+              }}
+            >
+              {t === "chart" ? "📏 Size Chart" : "✂️ Custom Size"}
+            </button>
+          ))}
+        </div>
+
+        {tab === "chart" ? (
+          <>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14 }}>
+              <thead>
+                <tr style={{ background: "var(--blush)" }}>
+                  {["Size", "Bust (in)", "Waist (in)", "Hip (in)"].map((h) => (
+                    <th key={h} style={{ padding: "12px 16px", textAlign: "left", fontWeight: 600, fontSize: 11, letterSpacing: 1, textTransform: "uppercase", color: "var(--muted)" }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {[["XS", "32-33", "26-28", "36-38"], ["S", "34-35", "28-30", "38-40"], ["M", "36-37", "30-32", "40-42"], ["L", "38-39", "34-36", "42-44"], ["XL", "40-42", "38-40", "44-46"]].map(([size, ...vals], i) => (
+                  <tr key={size} style={{ borderBottom: "1px solid var(--border)", background: i % 2 === 0 ? "white" : "var(--cream)" }}>
+                    <td style={{ padding: "12px 16px", fontWeight: 700, color: "var(--pink)" }}>{size}</td>
+                    {vals.map((v, j) => <td key={j} style={{ padding: "12px 16px", color: "var(--dark)" }}>{v}"</td>)}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <p style={{ fontSize: 13, color: "var(--muted)", marginTop: 20, lineHeight: 1.8 }}>
+              💡 <strong>Tip:</strong> If you're between sizes, we recommend sizing up for a more relaxed fit, or sizing down for a fitted look. All measurements are in inches.
+            </p>
+          </>
+        ) : (
+          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+            <p style={{ fontSize: 14, color: "var(--muted)", lineHeight: 1.8 }}>
+              Enter your exact measurements in <strong>inches</strong>. We'll tailor the garment to your measurements.
+            </p>
+            {[
+              { label: "Bust", value: bust, set: setBust, placeholder: "e.g. 36" },
+              { label: "Waist", value: waist, set: setWaist, placeholder: "e.g. 30" },
+              { label: "Hip", value: hip, set: setHip, placeholder: "e.g. 40" },
+            ].map(({ label, value, set, placeholder }) => (
+              <div key={label} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                <label style={{ fontSize: 11, letterSpacing: 1.5, textTransform: "uppercase", color: "var(--muted)", fontWeight: 600 }}>
+                  {label} (inches)
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  placeholder={placeholder}
+                  value={value}
+                  onChange={(e) => set(e.target.value)}
+                  style={inputStyle}
+                />
+              </div>
             ))}
-          </tbody>
-        </table>
-        <p style={{ fontSize: 13, color: "var(--muted)", marginTop: 20, lineHeight: 1.8 }}>
-          💡 <strong>Tip:</strong> If you're between sizes, we recommend sizing up for a more relaxed fit, or sizing down for a fitted look. All measurements are in inches.
-        </p>
+            <button
+              onClick={handleUseCustom}
+              disabled={!allFilled}
+              style={{
+                marginTop: 4, padding: "14px 0", borderRadius: 12, border: "none", cursor: allFilled ? "pointer" : "not-allowed",
+                background: allFilled ? "var(--pink)" : "#D1D5DB", color: "white",
+                fontSize: 12, letterSpacing: 2, fontWeight: 700, textTransform: "uppercase",
+                transition: "background 0.2s",
+              }}
+            >
+              Use Custom Size →
+            </button>
+          </div>
+        )}
       </div>
     </>
   );
@@ -280,6 +361,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
   const [selectedColor, setSelectedColor] = useState(0);
   const [qty, setQty] = useState(1);
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
+  const [customSize, setCustomSize] = useState<CustomSize | null>(null);
   const [modalProduct, setModalProduct] = useState<Product | null>(null);
   const [addedToCart, setAddedToCart] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -296,9 +378,9 @@ export default function ProductPage({ params }: { params: { id: string } }) {
   ).slice(0, 4);
 
   const handleAdd = () => {
-    const size = selectedSize || product.sizes[1] || "M";
+    const size = customSize ? "Custom" : (selectedSize || product.sizes[1] || "M");
     for (let i = 0; i < qty; i++) {
-      addToCart(product, size, selectedColor);
+      addToCart(product, size, selectedColor, customSize ?? undefined);
     }
     showToast(`${product.name} added to bag!`);
     setAddedToCart(true);
@@ -306,9 +388,9 @@ export default function ProductPage({ params }: { params: { id: string } }) {
   };
 
   const handleBuyNow = () => {
-    const size = selectedSize || product.sizes[1] || "M";
+    const size = customSize ? "Custom" : (selectedSize || product.sizes[1] || "M");
     for (let i = 0; i < qty; i++) {
-      addToCart(product, size, selectedColor);
+      addToCart(product, size, selectedColor, customSize ?? undefined);
     }
     router.push("/checkout");
   };
@@ -424,22 +506,44 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                 {product.sizes.map((s) => (
                   <button
                     key={s}
-                    onClick={() => setSelectedSize(s)}
+                    onClick={() => { setSelectedSize(s); setCustomSize(null); }}
                     style={{
                       padding: "12px 20px", borderRadius: 10,
-                      border: `1.5px solid ${selectedSize === s ? "var(--dark)" : "var(--border)"}`,
+                      border: `1.5px solid ${selectedSize === s && !customSize ? "var(--dark)" : "var(--border)"}`,
                       fontSize: 13, fontWeight: 600, cursor: "pointer",
-                      background: selectedSize === s ? "var(--dark)" : "white",
-                      color: selectedSize === s ? "white" : "var(--dark)",
+                      background: selectedSize === s && !customSize ? "var(--dark)" : "white",
+                      color: selectedSize === s && !customSize ? "white" : "var(--dark)",
                       transition: "all 0.2s",
-                      transform: selectedSize === s ? "translateY(-2px)" : "none",
-                      boxShadow: selectedSize === s ? "0 4px 15px rgba(0,0,0,0.12)" : "none",
+                      transform: selectedSize === s && !customSize ? "translateY(-2px)" : "none",
+                      boxShadow: selectedSize === s && !customSize ? "0 4px 15px rgba(0,0,0,0.12)" : "none",
                     }}
                   >
                     {s}
                   </button>
                 ))}
+                <button
+                  onClick={() => setSizeGuideOpen(true)}
+                  style={{
+                    padding: "12px 20px", borderRadius: 10,
+                    border: `1.5px solid ${customSize ? "var(--pink)" : "var(--border)"}`,
+                    fontSize: 13, fontWeight: 600, cursor: "pointer",
+                    background: customSize ? "var(--pink)" : "white",
+                    color: customSize ? "white" : "var(--muted)",
+                    transition: "all 0.2s",
+                    transform: customSize ? "translateY(-2px)" : "none",
+                    boxShadow: customSize ? "0 4px 15px rgba(233,30,140,0.2)" : "none",
+                  }}
+                >
+                  ✂️ Custom
+                </button>
               </div>
+              {customSize && (
+                <div style={{ display: "flex", gap: 10, marginTop: 10, fontSize: 12, color: "var(--muted)", alignItems: "center" }}>
+                  <span style={{ color: "var(--pink)", fontWeight: 600 }}>Custom measurements:</span>
+                  Bust {customSize.bust}" · Waist {customSize.waist}" · Hip {customSize.hip}"
+                  <button onClick={() => setCustomSize(null)} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--muted)", fontSize: 13, padding: 0, lineHeight: 1 }}>✕</button>
+                </div>
+              )}
             </div>
 
             {/* Qty */}
@@ -535,7 +639,12 @@ export default function ProductPage({ params }: { params: { id: string } }) {
         )}
       </section>
 
-      {sizeGuideOpen && <SizeGuide onClose={() => setSizeGuideOpen(false)} />}
+      {sizeGuideOpen && (
+        <SizeGuide
+          onClose={() => setSizeGuideOpen(false)}
+          onCustomSize={(sizes) => { setCustomSize(sizes); setSelectedSize(""); }}
+        />
+      )}
       {modalProduct && <ProductModal product={modalProduct} onClose={() => setModalProduct(null)} />}
     </>
   );

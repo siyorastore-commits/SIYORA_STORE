@@ -39,11 +39,18 @@ export interface Product {
   reviewsList?: ReviewItem[];
 }
 
+export interface CustomSize {
+  bust: string;
+  waist: string;
+  hip: string;
+}
+
 export interface CartItem extends Product {
   cartId: string;
   qty: number;
   selectedSize: string;
   selectedColor: number;
+  customSize?: CustomSize;
 }
 
 export interface OrderForm {
