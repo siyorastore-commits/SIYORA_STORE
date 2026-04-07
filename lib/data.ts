@@ -249,6 +249,94 @@ Add a fresh floral flair to your wardrobe with *Taara*! 🌸
       },
     ],
   },
+   {
+    id: 2.1,
+    name: "Ambar",
+    price: 799,
+    originalPrice: 999,
+    category: "kurta",
+    tag: "NEW",
+    rating: 5,
+    reviews: 2,
+    sizes: ["XS","S", "M", "L", "XL"],
+    colors: [],
+    description: `Meet Ambar 🌿 — the kurta that does the talking.
+
+Crafted from 100% pure cotton with a hand block-printed blue floral motif on a crisp ivory base. Easy to wear, impossible to ignore.
+
+For the man who dresses with intention.`,
+    longDescription: `**Ambar — Men's Cotton Hand Block Print Kurta**
+
+Introducing *Ambar* — a kurta designed for the modern man who values craft, comfort, and effortless style. Named after the sky, Ambar brings together the timeless tradition of hand block printing with the ease of everyday cotton wear.
+
+Featuring a striking blue floral block print on a clean ivory base, this kurta carries the soulful charm of artisan craftsmanship. The relaxed silhouette with a classic band collar makes it equally versatile — dress it down with wide-leg jeans and white sneakers for a casual, curated look, or pair it with straight trousers and kolhapuris for a festive touch.
+
+**Key Features:**
+
+* 🌿 **Fabric:** 100% Pure Cotton — breathable, soft & skin-friendly
+* 🖨️ **Print:** Hand block-printed blue floral motif on ivory base
+* 🪡 **Collar:** Classic band (Mandarin) collar
+* 👕 **Fit:** Relaxed, easy silhouette — true to size
+* ✨ **Occasion:** Casual outings, festive days, travel, brunch & beyond
+
+The cotton fabric keeps you cool all day while the artisanal block print ensures no two pieces are ever exactly alike — making your Ambar truly one of a kind.
+
+Styled best with light wash wide-leg denim or straight-cut trousers. Minimal accessories, maximum presence.
+
+*Ambar — wear the sky.* 🌤️`,
+    fabric: "100% Cotton",
+    care: "Machine wash cold, gentle cycle. Do not bleach. Dry in shade. Iron on reverse for best results.",
+    emoji: "🌿",
+    bgColor: "#EAF4F0",
+    highlights: [
+      "Hand Block Print",
+      "Band Collar",
+      "Pure Cotton",
+      "Full Sleeve",
+      "Relaxed Fit",
+    ],
+    deliveryDays: "6-7",
+    reviewsList: [
+      {
+        name: "Arjun S.",
+        city: "Jaipur",
+        rating: 5,
+        text: "Finally a men's kurta that actually looks premium without trying too hard. The block print on Ambar is stunning — rich blue on ivory is such a clean combo. Wore it with light jeans and got so many compliments. The cotton is super breathable too.",
+        date: "Mar 2026",
+      },
+      {
+        name: "Kabir M.",
+        city: "Delhi",
+        rating: 5,
+        text: "This is exactly what I was looking for — a kurta that works for a casual outing but still feels intentional. The hand block print gives it a handcrafted quality you can feel. Fit is perfect in L, true to size. Will be ordering again.",
+        date: "Mar 2026",
+      },
+      {
+        name: "Rohan T.",
+        city: "Mumbai",
+        rating: 5,
+        text: "Ambar is a vibe. The floral print is bold but not loud — it's the kind of piece that photographs beautifully and feels even better in person. Wore it for a family event paired with beige trousers and it was the perfect balance of desi and modern.",
+        date: "Apr 2026",
+      },
+    ],
+    media: [
+      {
+        type: "image",
+        src: "https://res.cloudinary.com/dghggvtdn/image/upload/v1775565579/12B2C8F1-463B-42F5-BA61-37D745173716_sjlxxg.png",
+        alt: "Ambar-1",
+        emoji: "🌹",
+        bg: "#FFF0E8",
+      },
+      {
+        type: "image",
+        src: "https://res.cloudinary.com/dghggvtdn/image/upload/v1775565579/IMG_1356_hdq8mo.png",
+        alt: "Ambar-2",
+        emoji: "🌹",
+        bg: "#F5E5D5",
+      },
+    
+    ],
+  },
   {
     id: 3,
     name: "Neelmani",
@@ -972,13 +1060,12 @@ and Back zip | Sleeves [IF REQUIRED]`,
 ];
 
 export const CATEGORIES = [
-  { id: "all", label: "All Styles", count: 12 },
-  
+  { id: "all", label: "All Styles", count: 13 },
   { id: "kurtis", label: "Kurtis", count: 8 },
-    { id: "tops", label: "Tops", count: 1 },
+  { id: "tops", label: "Tops", count: 1 },
   { id: "sets", label: "Co-ord Sets", count: 2 },
   { id: "dresses", label: "Jhilmil Dresses", count: 2 },
-  
+  { id: "kurta", label: "Men's Kurta", count: 1 },
 ];
 
 export const TESTIMONIALS = [

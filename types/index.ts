@@ -20,7 +20,7 @@ export interface Product {
   name: string;
   price: number;
   originalPrice: number;
-  category: "kurtis" | "sets" | "dresses" | "tops";
+  category: "kurtis" | "sets" | "dresses" | "tops" | "kurta";
   tag: string;
   rating: number;
   reviews: number;
