@@ -43,6 +43,10 @@ export interface CustomSize {
   bust: string;
   waist: string;
   hip: string;
+  // Men's kurta fields
+  chest?: string;
+  frontLength?: string;
+  acrossShoulder?: string;
 }
 
 export interface CartItem extends Product {

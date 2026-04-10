@@ -180,16 +180,27 @@ function MediaViewer({ product }: { product: Product }) {
 }
 
 // ─── Size Guide Modal ─────────────────────────────────────────────────────────
-function SizeGuide({ onClose, onCustomSize }: { onClose: () => void; onCustomSize: (sizes: CustomSize) => void }) {
+function SizeGuide({ onClose, onCustomSize, category }: { onClose: () => void; onCustomSize: (sizes: CustomSize) => void; category?: string }) {
+  const isMen = category === "kurta";
   const [tab, setTab] = useState<"chart" | "custom">("chart");
   const [bust, setBust] = useState("");
   const [waist, setWaist] = useState("");
   const [hip, setHip] = useState("");
-  const allFilled = bust.trim() && waist.trim() && hip.trim();
+  const [chest, setChest] = useState("");
+  const [frontLength, setFrontLength] = useState("");
+  const [acrossShoulder, setAcrossShoulder] = useState("");
+
+  const allFilled = isMen
+    ? chest.trim() && frontLength.trim() && waist.trim() && hip.trim() && acrossShoulder.trim()
+    : bust.trim() && waist.trim() && hip.trim();
 
   const handleUseCustom = () => {
     if (!allFilled) return;
-    onCustomSize({ bust: bust.trim(), waist: waist.trim(), hip: hip.trim() });
+    if (isMen) {
+      onCustomSize({ bust: "", waist: waist.trim(), hip: hip.trim(), chest: chest.trim(), frontLength: frontLength.trim(), acrossShoulder: acrossShoulder.trim() });
+    } else {
+      onCustomSize({ bust: bust.trim(), waist: waist.trim(), hip: hip.trim() });
+    }
     onClose();
   };
 
@@ -230,23 +241,43 @@ function SizeGuide({ onClose, onCustomSize }: { onClose: () => void; onCustomSiz
 
         {tab === "chart" ? (
           <>
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14 }}>
-              <thead>
-                <tr style={{ background: "var(--blush)" }}>
-                  {["Size", "Bust (in)", "Waist (in)", "Hip (in)"].map((h) => (
-                    <th key={h} style={{ padding: "12px 16px", textAlign: "left", fontWeight: 600, fontSize: 11, letterSpacing: 1, textTransform: "uppercase", color: "var(--muted)" }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {[["XS", "32-33", "26-28", "36-38"], ["S", "34-35", "28-30", "38-40"], ["M", "36-37", "30-32", "40-42"], ["L", "38-39", "34-36", "42-44"], ["XL", "40-42", "38-40", "44-46"]].map(([size, ...vals], i) => (
-                  <tr key={size} style={{ borderBottom: "1px solid var(--border)", background: i % 2 === 0 ? "white" : "var(--cream)" }}>
-                    <td style={{ padding: "12px 16px", fontWeight: 700, color: "var(--pink)" }}>{size}</td>
-                    {vals.map((v, j) => <td key={j} style={{ padding: "12px 16px", color: "var(--dark)" }}>{v}"</td>)}
+            {isMen ? (
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14 }}>
+                <thead>
+                  <tr style={{ background: "var(--blush)" }}>
+                    {["Size", "Chest (in)", "Front Length (in)", "Waist (in)", "Hips (in)", "Across Shoulder (in)"].map((h) => (
+                      <th key={h} style={{ padding: "12px 16px", textAlign: "left", fontWeight: 600, fontSize: 11, letterSpacing: 1, textTransform: "uppercase", color: "var(--muted)" }}>{h}</th>
+                    ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {[["S", "41.0", "29.0", "39.0", "41.0", "18.0"], ["M", "43.0", "29.5", "41.0", "43.0", "19.0"], ["L", "45.0", "30.0", "43.0", "45.0", "20.0"], ["XL", "48.0", "30.5", "46.0", "48.0", "21.0"], ["XXL", "52.0", "31.0", "50.0", "52.0", "22.0"]].map(([size, ...vals], i) => (
+                    <tr key={size} style={{ borderBottom: "1px solid var(--border)", background: i % 2 === 0 ? "white" : "var(--cream)" }}>
+                      <td style={{ padding: "12px 16px", fontWeight: 700, color: "var(--pink)" }}>{size}</td>
+                      {vals.map((v, j) => <td key={j} style={{ padding: "12px 16px", color: "var(--dark)" }}>{v}"</td>)}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14 }}>
+                <thead>
+                  <tr style={{ background: "var(--blush)" }}>
+                    {["Size", "Bust (in)", "Waist (in)", "Hip (in)"].map((h) => (
+                      <th key={h} style={{ padding: "12px 16px", textAlign: "left", fontWeight: 600, fontSize: 11, letterSpacing: 1, textTransform: "uppercase", color: "var(--muted)" }}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {[["XS", "32-33", "26-28", "36-38"], ["S", "34-35", "28-30", "38-40"], ["M", "36-37", "30-32", "40-42"], ["L", "38-39", "34-36", "42-44"], ["XL", "40-42", "38-40", "44-46"]].map(([size, ...vals], i) => (
+                    <tr key={size} style={{ borderBottom: "1px solid var(--border)", background: i % 2 === 0 ? "white" : "var(--cream)" }}>
+                      <td style={{ padding: "12px 16px", fontWeight: 700, color: "var(--pink)" }}>{size}</td>
+                      {vals.map((v, j) => <td key={j} style={{ padding: "12px 16px", color: "var(--dark)" }}>{v}"</td>)}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
             <p style={{ fontSize: 13, color: "var(--muted)", marginTop: 20, lineHeight: 1.8 }}>
               💡 <strong>Tip:</strong> If you're between sizes, we recommend sizing up for a more relaxed fit, or sizing down for a fitted look. All measurements are in inches.
             </p>
@@ -256,11 +287,17 @@ function SizeGuide({ onClose, onCustomSize }: { onClose: () => void; onCustomSiz
             <p style={{ fontSize: 14, color: "var(--muted)", lineHeight: 1.8 }}>
               Enter your exact measurements in <strong>inches</strong>. We'll tailor the garment to your measurements.
             </p>
-            {[
+            {(isMen ? [
+              { label: "Chest", value: chest, set: setChest, placeholder: "e.g. 41" },
+              { label: "Front Length", value: frontLength, set: setFrontLength, placeholder: "e.g. 29" },
+              { label: "Waist", value: waist, set: setWaist, placeholder: "e.g. 39" },
+              { label: "Hips", value: hip, set: setHip, placeholder: "e.g. 41" },
+              { label: "Across Shoulder", value: acrossShoulder, set: setAcrossShoulder, placeholder: "e.g. 18" },
+            ] : [
               { label: "Bust", value: bust, set: setBust, placeholder: "e.g. 36" },
               { label: "Waist", value: waist, set: setWaist, placeholder: "e.g. 30" },
               { label: "Hip", value: hip, set: setHip, placeholder: "e.g. 40" },
-            ].map(({ label, value, set, placeholder }) => (
+            ]).map(({ label, value, set, placeholder }) => (
               <div key={label} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                 <label style={{ fontSize: 11, letterSpacing: 1.5, textTransform: "uppercase", color: "var(--muted)", fontWeight: 600 }}>
                   {label} (inches)
@@ -540,7 +577,9 @@ export default function ProductPage({ params }: { params: { id: string } }) {
               {customSize && (
                 <div style={{ display: "flex", gap: 10, marginTop: 10, fontSize: 12, color: "var(--muted)", alignItems: "center" }}>
                   <span style={{ color: "var(--pink)", fontWeight: 600 }}>Custom measurements:</span>
-                  Bust {customSize.bust}" · Waist {customSize.waist}" · Hip {customSize.hip}"
+                  {product.category === "kurta"
+                    ? `Chest ${customSize.chest}" · F.Length ${customSize.frontLength}" · Waist ${customSize.waist}" · Hips ${customSize.hip}" · Shoulder ${customSize.acrossShoulder}"`
+                    : `Bust ${customSize.bust}" · Waist ${customSize.waist}" · Hip ${customSize.hip}"`}
                   <button onClick={() => setCustomSize(null)} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--muted)", fontSize: 13, padding: 0, lineHeight: 1 }}>✕</button>
                 </div>
               )}
@@ -643,6 +682,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
         <SizeGuide
           onClose={() => setSizeGuideOpen(false)}
           onCustomSize={(sizes) => { setCustomSize(sizes); setSelectedSize(""); }}
+          category={product.category}
         />
       )}
       {modalProduct && <ProductModal product={modalProduct} onClose={() => setModalProduct(null)} />}
