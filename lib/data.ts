@@ -1,7 +1,7 @@
 import { Product } from "@/types";
 
 export const PRODUCTS: Product[] = [
-    {
+  {
     id: 0.5,
     name: "Taara",
     price: 899,
@@ -53,31 +53,31 @@ Add a fresh floral flair to your wardrobe with *Taara*! 🌸
     care: "Machine wash cold, gentle cycle. Do not bleach. Iron at low heat.",
     emoji: "🌸",
     bgColor: "#FFE8EE",
-    highlights: ["Breathable","Floral","Elegant","Lightweight"],
+    highlights: ["Breathable", "Floral", "Elegant", "Lightweight"],
     deliveryDays: "6-7",
-   reviewsList: [
-  {
-    name: "Riya K.",
-    city: "Mumbai",
-    rating: 5,
-    text: "Absolutely love this top! The cotton fabric is super breathable and perfect for Mumbai weather. The tie-up detail adds such a cute touch. Got so many compliments!",
-    date: "Feb 2026",
-  },
-  {
-    name: "Simran B.",
-    city: "Chandigarh",
-    rating: 4,
-    text: "The floral print is even prettier in person. It fits really well and feels very comfortable for all-day wear. Great for casual outings.",
-    date: "Jan 2026",
-  },
-  {
-    name: "Mehak A.",
-    city: "Hyderabad",
-    rating: 5,
-    text: "Wore this for a brunch and it looked amazing with jeans. The fabric is soft and lightweight, and the front detail makes it stand out.",
-    date: "Mar 2026",
-  },
-   ],
+    reviewsList: [
+      {
+        name: "Riya K.",
+        city: "Mumbai",
+        rating: 5,
+        text: "Absolutely love this top! The cotton fabric is super breathable and perfect for Mumbai weather. The tie-up detail adds such a cute touch. Got so many compliments!",
+        date: "Feb 2026",
+      },
+      {
+        name: "Simran B.",
+        city: "Chandigarh",
+        rating: 4,
+        text: "The floral print is even prettier in person. It fits really well and feels very comfortable for all-day wear. Great for casual outings.",
+        date: "Jan 2026",
+      },
+      {
+        name: "Mehak A.",
+        city: "Hyderabad",
+        rating: 5,
+        text: "Wore this for a brunch and it looked amazing with jeans. The fabric is soft and lightweight, and the front detail makes it stand out.",
+        date: "Mar 2026",
+      },
+    ],
     media: [
       {
         type: "image",
@@ -113,6 +113,7 @@ Add a fresh floral flair to your wardrobe with *Taara*! 🌸
     reviews: 50,
     sizes: ["XS", "S", "M", "L", "XL"],
     colors: [],
+    outOfStock: true,
     description:
       "Cherry blossom pure cotton soft fabric kurti ✔️🍒🌸, Perfect for spring and Pinterest coded girlies 🎀",
     longDescription: `Cherry blossom pure cotton soft fabric kurti ✔️🍒🌸, Perfect for spring and Pinterest coded girlies 🎀`,
@@ -121,7 +122,7 @@ Add a fresh floral flair to your wardrobe with *Taara*! 🌸
     emoji: "🌸",
     bgColor: "#FFE8EE",
     highlights: ["Structured Fit", "Bow on Neckline", "Chooridar Sleeves"],
-    deliveryDays: "6-7",
+    deliveryDays: "10-14",
     reviewsList: [
       {
         name: "Aisha K.",
@@ -249,7 +250,7 @@ Add a fresh floral flair to your wardrobe with *Taara*! 🌸
       },
     ],
   },
-   {
+  {
     id: 2.1,
     name: "Ambar",
     price: 799,
@@ -258,7 +259,7 @@ Add a fresh floral flair to your wardrobe with *Taara*! 🌸
     tag: "NEW",
     rating: 5,
     reviews: 2,
-    sizes: ["XS","S", "M", "L", "XL"],
+    sizes: ["XS", "S", "M", "L", "XL"],
     colors: [],
     description: `Meet Ambar 🌿 — the kurta that does the talking.
 
@@ -334,7 +335,6 @@ Styled best with light wash wide-leg denim or straight-cut trousers. Minimal acc
         emoji: "🌹",
         bg: "#F5E5D5",
       },
-    
     ],
   },
   {
@@ -932,11 +932,7 @@ The kurti that makes “less is more” look effortless.`,
     care: "Machine wash cold, gentle cycle. Do not bleach. Tumble dry low.",
     emoji: "🌸",
     bgColor: "#FFE8EE",
-    highlights: [
-      "Square Neck",
-      "Farshi Salwaar",
-      "Dupatta With Lace",
-    ],
+    highlights: ["Square Neck", "Farshi Salwaar", "Dupatta With Lace"],
     deliveryDays: "6-7",
     reviewsList: [
       {
