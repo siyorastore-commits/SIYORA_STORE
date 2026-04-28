@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { notFound } from "next/navigation";
@@ -391,11 +391,30 @@ function ReviewsSection({ product }: { product: Product }) {
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function ProductPage({ params }: { params: { id: string } }) {
-  const product = PRODUCTS.find((p) => p.id === Number(params.id));
-  if (!product) return notFound();
+  const baseProduct = PRODUCTS.find((p) => p.id === Number(params.id));
+  if (!baseProduct) return notFound();
 
+  const [product, setProduct] = useState<Product>(baseProduct);
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedColor, setSelectedColor] = useState(0);
+
+  useEffect(() => {
+    fetch("/api/product-overrides")
+      .then((r) => r.json())
+      .then((d) => {
+        const o = (d.overrides || []).find(
+          (x: { product_id: string }) => x.product_id === String(baseProduct.id)
+        );
+        if (!o) return;
+        setProduct((prev) => ({
+          ...prev,
+          outOfStock: o.out_of_stock ?? prev.outOfStock,
+          price: o.price_override ?? prev.price,
+          tag: o.tag_override ?? prev.tag,
+        }));
+      })
+      .catch(() => {});
+  }, [baseProduct.id]);
   const [qty, setQty] = useState(1);
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
   const [customSize, setCustomSize] = useState<CustomSize | null>(null);
