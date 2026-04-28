@@ -95,6 +95,80 @@ export async function getOrderById(id: string) {
   return data;
 }
 
+export async function getAllOrders() {
+  const { data, error } = await supabaseAdmin
+    .from("orders")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function updateOrderStatus(
+  orderId: string,
+  orderStatus: string,
+  paymentStatus?: string
+) {
+  const update: Record<string, string> = { order_status: orderStatus };
+  if (paymentStatus) update.payment_status = paymentStatus;
+  const { data, error } = await supabaseAdmin
+    .from("orders")
+    .update(update)
+    .eq("id", orderId)
+    .select()
+    .single();
+
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function getProductOverrides() {
+  const { data, error } = await supabaseAdmin
+    .from("product_overrides")
+    .select("*");
+
+  if (error) return [];
+  return data || [];
+}
+
+export async function upsertProductOverride(
+  productId: string,
+  patch: {
+    out_of_stock?: boolean;
+    hidden?: boolean;
+    price_override?: number | null;
+    tag_override?: string | null;
+  }
+) {
+  const { data, error } = await supabaseAdmin
+    .from("product_overrides")
+    .upsert({ product_id: productId, ...patch, updated_at: new Date().toISOString() })
+    .select()
+    .single();
+
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function getSiteContent(key: string) {
+  const { data } = await supabaseAdmin
+    .from("site_content")
+    .select("value")
+    .eq("key", key)
+    .single();
+
+  return data?.value ?? null;
+}
+
+export async function setSiteContent(key: string, value: unknown) {
+  const { error } = await supabaseAdmin
+    .from("site_content")
+    .upsert({ key, value, updated_at: new Date().toISOString() });
+
+  if (error) throw new Error(error.message);
+}
+
 /*
 ─── SUPABASE SQL SCHEMA ─────────────────────────────────────────────────────
 Run this in your Supabase SQL Editor:

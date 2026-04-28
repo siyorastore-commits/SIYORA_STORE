@@ -1,19 +1,52 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { PRODUCTS, CATEGORIES } from "@/lib/data";
 import { Product } from "@/types";
 import ProductCard from "@/components/ProductCard";
 import ProductModal from "@/components/ProductModal";
 
+interface Override {
+  product_id: string;
+  out_of_stock?: boolean;
+  hidden?: boolean;
+  price_override?: number | null;
+  tag_override?: string | null;
+}
+
 export default function ShopPage() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [sort, setSort] = useState("default");
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [overrides, setOverrides] = useState<Override[]>([]);
+
+  useEffect(() => {
+    fetch("/api/product-overrides")
+      .then((r) => r.json())
+      .then((d) => setOverrides(d.overrides || []))
+      .catch(() => {});
+  }, []);
+
+  const mergedProducts = useMemo(() => {
+    const map = Object.fromEntries(overrides.map((o) => [o.product_id, o]));
+    return PRODUCTS.map((p) => {
+      const o = map[String(p.id)];
+      if (!o) return p;
+      return {
+        ...p,
+        outOfStock: o.out_of_stock ?? p.outOfStock,
+        price: o.price_override ?? p.price,
+        tag: o.tag_override ?? p.tag,
+      };
+    }).filter((p) => {
+      const o = map[String(p.id)];
+      return !o?.hidden;
+    });
+  }, [overrides]);
 
   let filtered =
     activeCategory === "all"
-      ? PRODUCTS
-      : PRODUCTS.filter((p) => p.category === activeCategory);
+      ? mergedProducts
+      : mergedProducts.filter((p) => p.category === activeCategory);
 
   if (sort === "low") filtered = [...filtered].sort((a, b) => a.price - b.price);
   if (sort === "high") filtered = [...filtered].sort((a, b) => b.price - a.price);
