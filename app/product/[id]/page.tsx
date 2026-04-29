@@ -394,6 +394,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
   const baseProduct = PRODUCTS.find((p) => p.id === Number(params.id));
   if (!baseProduct) return notFound();
 
+  const productId = baseProduct.id;
   const [product, setProduct] = useState<Product>(baseProduct);
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedColor, setSelectedColor] = useState(0);
@@ -404,7 +405,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
         .then((r) => r.json())
         .then((d) => {
           const o = (d.overrides || []).find(
-            (x: { product_id: string }) => x.product_id === String(baseProduct.id)
+            (x: { product_id: string }) => x.product_id === String(productId)
           );
           if (!o) return;
           setProduct((prev) => ({
@@ -419,7 +420,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
     fetchOverride();
     window.addEventListener("focus", fetchOverride);
     return () => window.removeEventListener("focus", fetchOverride);
-  }, [baseProduct.id]);
+  }, [productId]);
   const [qty, setQty] = useState(1);
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
   const [customSize, setCustomSize] = useState<CustomSize | null>(null);
