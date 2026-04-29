@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { PRODUCTS, CATEGORIES, TESTIMONIALS } from "@/lib/data";
 import { Product } from "@/types";
@@ -8,15 +8,50 @@ import ProductModal from "@/components/ProductModal";
 import { useCart } from "@/context/CartContext";
 import { showToast } from "@/components/Toast";
 
+interface Override {
+  product_id: string;
+  out_of_stock?: boolean;
+  hidden?: boolean;
+  price_override?: number | null;
+  tag_override?: string | null;
+}
+
 export default function HomePage() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [activeCategory, setActiveCategory] = useState("all");
+  const [overrides, setOverrides] = useState<Override[]>([]);
   const { addToCart } = useCart();
+
+  useEffect(() => {
+    function fetchOverrides() {
+      fetch("/api/product-overrides", { cache: "no-store" })
+        .then((r) => r.json())
+        .then((d) => setOverrides(d.overrides || []))
+        .catch(() => {});
+    }
+    fetchOverrides();
+    window.addEventListener("focus", fetchOverrides);
+    return () => window.removeEventListener("focus", fetchOverrides);
+  }, []);
+
+  const mergedProducts = useMemo(() => {
+    const map = Object.fromEntries(overrides.map((o) => [o.product_id, o]));
+    return PRODUCTS.map((p) => {
+      const o = map[String(p.id)];
+      if (!o) return p;
+      return {
+        ...p,
+        outOfStock: o.out_of_stock != null ? o.out_of_stock : (p.outOfStock ?? false),
+        price: o.price_override != null ? o.price_override : p.price,
+        tag: o.tag_override != null ? o.tag_override : p.tag,
+      };
+    }).filter((p) => !map[String(p.id)]?.hidden);
+  }, [overrides]);
 
   const filtered =
     activeCategory === "all"
-      ? PRODUCTS
-      : PRODUCTS.filter((p) => p.category === activeCategory);
+      ? mergedProducts
+      : mergedProducts.filter((p) => p.category === activeCategory);
 
   const handleAddToCart = (product: Product, size: string, colorIdx: number) => {
     addToCart(product, size, colorIdx);

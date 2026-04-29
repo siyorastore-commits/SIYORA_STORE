@@ -20,10 +20,15 @@ export default function ShopPage() {
   const [overrides, setOverrides] = useState<Override[]>([]);
 
   useEffect(() => {
-    fetch("/api/product-overrides")
-      .then((r) => r.json())
-      .then((d) => setOverrides(d.overrides || []))
-      .catch(() => {});
+    function fetchOverrides() {
+      fetch("/api/product-overrides", { cache: "no-store" })
+        .then((r) => r.json())
+        .then((d) => setOverrides(d.overrides || []))
+        .catch(() => {});
+    }
+    fetchOverrides();
+    window.addEventListener("focus", fetchOverrides);
+    return () => window.removeEventListener("focus", fetchOverrides);
   }, []);
 
   const mergedProducts = useMemo(() => {
@@ -33,9 +38,10 @@ export default function ShopPage() {
       if (!o) return p;
       return {
         ...p,
-        outOfStock: o.out_of_stock ?? p.outOfStock,
-        price: o.price_override ?? p.price,
-        tag: o.tag_override ?? p.tag,
+        // DB is source of truth; static data is fallback only when DB has no row
+        outOfStock: o.out_of_stock != null ? o.out_of_stock : (p.outOfStock ?? false),
+        price: o.price_override != null ? o.price_override : p.price,
+        tag: o.tag_override != null ? o.tag_override : p.tag,
       };
     }).filter((p) => {
       const o = map[String(p.id)];

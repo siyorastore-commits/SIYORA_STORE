@@ -399,21 +399,26 @@ export default function ProductPage({ params }: { params: { id: string } }) {
   const [selectedColor, setSelectedColor] = useState(0);
 
   useEffect(() => {
-    fetch("/api/product-overrides")
-      .then((r) => r.json())
-      .then((d) => {
-        const o = (d.overrides || []).find(
-          (x: { product_id: string }) => x.product_id === String(baseProduct.id)
-        );
-        if (!o) return;
-        setProduct((prev) => ({
-          ...prev,
-          outOfStock: o.out_of_stock ?? prev.outOfStock,
-          price: o.price_override ?? prev.price,
-          tag: o.tag_override ?? prev.tag,
-        }));
-      })
-      .catch(() => {});
+    function fetchOverride() {
+      fetch("/api/product-overrides", { cache: "no-store" })
+        .then((r) => r.json())
+        .then((d) => {
+          const o = (d.overrides || []).find(
+            (x: { product_id: string }) => x.product_id === String(baseProduct.id)
+          );
+          if (!o) return;
+          setProduct((prev) => ({
+            ...prev,
+            outOfStock: o.out_of_stock != null ? o.out_of_stock : (prev.outOfStock ?? false),
+            price: o.price_override != null ? o.price_override : prev.price,
+            tag: o.tag_override != null ? o.tag_override : prev.tag,
+          }));
+        })
+        .catch(() => {});
+    }
+    fetchOverride();
+    window.addEventListener("focus", fetchOverride);
+    return () => window.removeEventListener("focus", fetchOverride);
   }, [baseProduct.id]);
   const [qty, setQty] = useState(1);
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false);

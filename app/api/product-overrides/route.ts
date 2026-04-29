@@ -5,5 +5,8 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   const overrides = await getProductOverrides();
-  return NextResponse.json({ overrides });
+  return NextResponse.json(
+    { overrides },
+    { headers: { "Cache-Control": "no-store" } }
+  );
 }

@@ -13,6 +13,7 @@ interface AdminProduct {
   hidden: boolean;
   priceOverride: number | null;
   tagOverride: string | null;
+  quantity: number | null;
 }
 
 export default function ProductsAdmin() {
@@ -22,41 +23,60 @@ export default function ProductsAdmin() {
   const [saved, setSaved] = useState<string | null>(null);
   const [priceEdits, setPriceEdits] = useState<Record<string, string>>({});
   const [tagEdits, setTagEdits] = useState<Record<string, string>>({});
+  const [qtyEdits, setQtyEdits] = useState<Record<string, string>>({});
+
+  async function loadProducts() {
+    setLoading(true);
+    const r = await fetch("/api/admin/products", { cache: "no-store" });
+    const d = await r.json();
+    setProducts(d.products || []);
+    const prices: Record<string, string> = {};
+    const tags: Record<string, string> = {};
+    const qtys: Record<string, string> = {};
+    (d.products || []).forEach((p: AdminProduct) => {
+      prices[p.id] = p.priceOverride != null ? String(p.priceOverride) : "";
+      tags[p.id] = p.tagOverride || "";
+      qtys[p.id] = p.quantity != null ? String(p.quantity) : "";
+    });
+    setPriceEdits(prices);
+    setTagEdits(tags);
+    setQtyEdits(qtys);
+    setLoading(false);
+  }
 
   useEffect(() => {
-    fetch("/api/admin/products")
-      .then((r) => r.json())
-      .then((d) => {
-        setProducts(d.products || []);
-        const prices: Record<string, string> = {};
-        const tags: Record<string, string> = {};
-        (d.products || []).forEach((p: AdminProduct) => {
-          prices[p.id] = p.priceOverride != null ? String(p.priceOverride) : "";
-          tags[p.id] = p.tagOverride || "";
-        });
-        setPriceEdits(prices);
-        setTagEdits(tags);
-        setLoading(false);
-      });
+    loadProducts();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function saveProduct(p: AdminProduct) {
     setSaving(String(p.id));
     const priceVal = priceEdits[p.id];
     const tagVal = tagEdits[p.id];
+    const qtyVal = qtyEdits[p.id];
+    const quantity = qtyVal !== "" ? Number(qtyVal) : null;
 
-    await fetch("/api/admin/products", {
+    const res = await fetch("/api/admin/products", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         productId: p.id,
-        out_of_stock: p.outOfStock,
+        out_of_stock: quantity === 0 ? true : p.outOfStock,
         hidden: p.hidden,
         price_override: priceVal ? Number(priceVal) : null,
         tag_override: tagVal || null,
+        quantity,
       }),
     });
 
+    if (!res.ok) {
+      setSaving(null);
+      alert("Save failed — check your Supabase connection or env vars.");
+      return;
+    }
+
+    // Re-fetch fresh data from server so admin panel reflects actual DB state
+    await loadProducts();
     setSaving(null);
     setSaved(String(p.id));
     setTimeout(() => setSaved(null), 2000);
@@ -99,7 +119,7 @@ export default function ProductsAdmin() {
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
             <thead>
               <tr style={{ background: "#fdf8f5" }}>
-                {["Product", "Category", "Price (₹)", "Tag Override", "Out of Stock", "Hidden", ""].map(
+                {["Product", "Category", "Price (₹)", "Tag Override", "Quantity", "Out of Stock", "Hidden", ""].map(
                   (h) => (
                     <th
                       key={h}
@@ -197,6 +217,37 @@ export default function ProductsAdmin() {
                       }
                       style={{
                         width: 100,
+                        padding: "6px 8px",
+                        border: "1.5px solid #e8ddd8",
+                        borderRadius: 6,
+                        fontSize: 12,
+                        fontFamily: "var(--sans)",
+                        outline: "none",
+                      }}
+                    />
+                  </td>
+
+                  {/* Quantity */}
+                  <td style={{ padding: "12px 16px" }}>
+                    <div style={{ fontSize: 11, color: "#9ca3af", marginBottom: 3 }}>
+                      {p.quantity != null ? (
+                        <span style={{ color: p.quantity === 0 ? "#dc2626" : p.quantity <= 5 ? "#d97706" : "#16a34a", fontWeight: 600 }}>
+                          {p.quantity} in stock
+                        </span>
+                      ) : (
+                        <span>Untracked</span>
+                      )}
+                    </div>
+                    <input
+                      type="number"
+                      min="0"
+                      placeholder="Set qty…"
+                      value={qtyEdits[p.id] ?? ""}
+                      onChange={(e) =>
+                        setQtyEdits((prev) => ({ ...prev, [p.id]: e.target.value }))
+                      }
+                      style={{
+                        width: 80,
                         padding: "6px 8px",
                         border: "1.5px solid #e8ddd8",
                         borderRadius: 6,

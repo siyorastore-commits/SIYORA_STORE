@@ -15,6 +15,7 @@ export async function GET(request: Request) {
     hidden?: boolean;
     price_override?: number | null;
     tag_override?: string | null;
+    quantity?: number | null;
   };
   const overrideMap = Object.fromEntries(
     (overrides as Override[]).map((o) => [o.product_id, o])
@@ -30,10 +31,11 @@ export async function GET(request: Request) {
       category: p.category,
       tag: p.tag,
       media: p.media[0]?.src || "",
-      outOfStock: override.out_of_stock ?? p.outOfStock ?? false,
-      hidden: override.hidden ?? false,
-      priceOverride: override.price_override ?? null,
-      tagOverride: override.tag_override ?? null,
+      outOfStock: override.out_of_stock != null ? override.out_of_stock : (p.outOfStock ?? false),
+      hidden: override.hidden != null ? override.hidden : false,
+      priceOverride: override.price_override != null ? override.price_override : null,
+      tagOverride: override.tag_override != null ? override.tag_override : null,
+      quantity: override.quantity ?? null,
     };
   });
 

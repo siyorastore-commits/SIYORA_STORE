@@ -139,16 +139,48 @@ export async function upsertProductOverride(
     hidden?: boolean;
     price_override?: number | null;
     tag_override?: string | null;
+    quantity?: number | null;
   }
 ) {
+  const updates: typeof patch = { ...patch };
+  // Auto out-of-stock when quantity hits 0
+  if (typeof updates.quantity === "number" && updates.quantity <= 0) {
+    updates.quantity = 0;
+    updates.out_of_stock = true;
+  }
+
   const { data, error } = await supabaseAdmin
     .from("product_overrides")
-    .upsert({ product_id: productId, ...patch, updated_at: new Date().toISOString() })
+    .upsert({ product_id: productId, ...updates, updated_at: new Date().toISOString() })
     .select()
     .single();
 
   if (error) throw new Error(error.message);
   return data;
+}
+
+/** Subtract ordered quantities after payment; auto-marks out-of-stock at 0. */
+export async function decrementProductQuantities(
+  items: Array<{ productId: string; qty: number }>
+) {
+  for (const { productId, qty } of items) {
+    const { data } = await supabaseAdmin
+      .from("product_overrides")
+      .select("quantity, out_of_stock")
+      .eq("product_id", productId)
+      .maybeSingle();
+
+    // Skip products with no quantity set (untracked)
+    if (!data || data.quantity == null) continue;
+
+    const newQty = Math.max(0, data.quantity - qty);
+    await supabaseAdmin.from("product_overrides").upsert({
+      product_id: productId,
+      quantity: newQty,
+      out_of_stock: newQty === 0 ? true : data.out_of_stock,
+      updated_at: new Date().toISOString(),
+    });
+  }
 }
 
 export async function getSiteContent(key: string) {
@@ -172,6 +204,9 @@ export async function setSiteContent(key: string, value: unknown) {
 /*
 ─── SUPABASE SQL SCHEMA ─────────────────────────────────────────────────────
 Run this in your Supabase SQL Editor:
+
+-- Add quantity column to product_overrides (run once):
+alter table product_overrides add column if not exists quantity integer default null;
 
 create table orders (
   id uuid default gen_random_uuid() primary key,

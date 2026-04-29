@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { verifyRazorpaySignature } from "@/lib/razorpay";
-import { updateOrderAfterPayment } from "@/lib/supabase";
+import { updateOrderAfterPayment, decrementProductQuantities } from "@/lib/supabase";
 import { sendOrderConfirmationEmail } from "@/lib/resend";
 
 export async function POST(req: Request) {
@@ -43,6 +43,15 @@ export async function POST(req: Request) {
       isCOD ? "COD" : razorpay_payment_id,
       "paid",
       "confirmed"
+    );
+
+    // Decrement product quantities (non-blocking)
+    const orderItems = (orderData.items || []).map((item: any) => ({
+      productId: String(item.id),
+      qty: item.qty || 1,
+    }));
+    decrementProductQuantities(orderItems).catch((err) =>
+      console.error("Quantity decrement failed:", err)
     );
 
     // Send confirmation email (non-blocking)
