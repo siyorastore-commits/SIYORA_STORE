@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { unstable_noStore as noStore } from "next/cache";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -124,6 +125,7 @@ export async function updateOrderStatus(
 }
 
 export async function getProductOverrides() {
+  noStore();
   const { data, error } = await supabaseAdmin
     .from("product_overrides")
     .select("*");
