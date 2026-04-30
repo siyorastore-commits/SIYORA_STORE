@@ -5,6 +5,7 @@ import { PRODUCTS, CATEGORIES, TESTIMONIALS } from "@/lib/data";
 import { Product } from "@/types";
 import ProductCard from "@/components/ProductCard";
 import ProductModal from "@/components/ProductModal";
+import VideoReels from "@/components/VideoReels";
 import { useCart } from "@/context/CartContext";
 import { showToast } from "@/components/Toast";
 
@@ -127,6 +128,9 @@ export default function HomePage() {
           </div>
         </div>
       </div>
+
+      {/* ── VIDEO REELS ──────────────────────────────────── */}
+      {/* <VideoReels /> */}
 
       {/* ── SHOP SECTION ─────────────────────────────────── */}
       <section className="section">
