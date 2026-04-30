@@ -130,7 +130,7 @@ export default function HomePage() {
       </div>
 
       {/* ── VIDEO REELS ──────────────────────────────────── */}
-      {/* <VideoReels /> */}
+      <VideoReels />
 
       {/* ── SHOP SECTION ─────────────────────────────────── */}
       <section className="section">
