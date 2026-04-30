@@ -41,23 +41,37 @@ export default function OrdersAdmin() {
   const [expanded, setExpanded] = useState<string | null>(null);
   const [localStatus, setLocalStatus] = useState<Record<string, string>>({});
   const [localPayment, setLocalPayment] = useState<Record<string, string>>({});
+  const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
+  function fetchOrders(silent = false) {
+    if (silent) setRefreshing(true);
+    else setLoading(true);
     fetch("/api/admin/orders")
       .then((r) => r.json())
       .then((d) => {
         const o = d.orders || [];
         setOrders(o);
-        const statuses: Record<string, string> = {};
-        const payments: Record<string, string> = {};
-        o.forEach((order: Order) => {
-          statuses[order.id] = order.order_status;
-          payments[order.id] = order.payment_status;
+        setLocalStatus((prev) => {
+          const statuses: Record<string, string> = {};
+          o.forEach((order: Order) => {
+            statuses[order.id] = prev[order.id] ?? order.order_status;
+          });
+          return statuses;
         });
-        setLocalStatus(statuses);
-        setLocalPayment(payments);
+        setLocalPayment((prev) => {
+          const payments: Record<string, string> = {};
+          o.forEach((order: Order) => {
+            payments[order.id] = prev[order.id] ?? order.payment_status;
+          });
+          return payments;
+        });
         setLoading(false);
+        setRefreshing(false);
       });
+  }
+
+  useEffect(() => {
+    fetchOrders();
   }, []);
 
   async function saveStatus(orderId: string) {
@@ -88,19 +102,38 @@ export default function OrdersAdmin() {
 
   return (
     <div>
-      <h1
-        style={{
-          fontFamily: "var(--serif)",
-          fontSize: 32,
-          fontWeight: 700,
-          color: "#180A08",
-          marginBottom: 4,
-        }}
-      >
-        Orders
-      </h1>
+      <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 4 }}>
+        <h1
+          style={{
+            fontFamily: "var(--serif)",
+            fontSize: 32,
+            fontWeight: 700,
+            color: "#180A08",
+            margin: 0,
+          }}
+        >
+          Orders
+        </h1>
+        <button
+          onClick={() => fetchOrders(true)}
+          disabled={refreshing}
+          style={{
+            padding: "6px 14px",
+            background: refreshing ? "#f5f0eb" : "#fff",
+            border: "1.5px solid #e8ddd8",
+            borderRadius: 8,
+            fontSize: 12,
+            fontWeight: 600,
+            color: "#7A5555",
+            cursor: refreshing ? "not-allowed" : "pointer",
+            fontFamily: "var(--sans)",
+          }}
+        >
+          {refreshing ? "Refreshing…" : "Refresh"}
+        </button>
+      </div>
       <p style={{ color: "#7A5555", fontSize: 14, marginBottom: 24 }}>
-        {orders.length} total orders · Update status and track payments
+        {orders.length} total orders · Auto-refreshes every 30s
       </p>
 
       {/* Filter tabs */}
