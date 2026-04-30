@@ -46,7 +46,7 @@ export default function OrdersAdmin() {
   function fetchOrders(silent = false) {
     if (silent) setRefreshing(true);
     else setLoading(true);
-    fetch("/api/admin/orders")
+    fetch("/api/admin/orders", { cache: "no-store" })
       .then((r) => r.json())
       .then((d) => {
         const o = d.orders || [];

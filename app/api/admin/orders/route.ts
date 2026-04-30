@@ -2,13 +2,15 @@ import { NextResponse } from "next/server";
 import { checkAdminRequest } from "@/lib/admin-auth";
 import { getAllOrders, updateOrderStatus } from "@/lib/supabase";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request: Request) {
   if (!checkAdminRequest(request)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const orders = await getAllOrders();
-  return NextResponse.json({ orders });
+  return NextResponse.json({ orders }, { headers: { "Cache-Control": "no-store" } });
 }
 
 export async function PUT(request: Request) {

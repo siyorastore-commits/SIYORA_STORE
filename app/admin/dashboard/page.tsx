@@ -29,7 +29,7 @@ export default function DashboardOverview() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/admin/orders")
+    fetch("/api/admin/orders", { cache: "no-store" })
       .then((r) => r.json())
       .then((d) => {
         setOrders(d.orders || []);
