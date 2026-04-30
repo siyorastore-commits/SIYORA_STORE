@@ -3,6 +3,8 @@ import { checkAdminRequest } from "@/lib/admin-auth";
 import { getSiteContent, setSiteContent } from "@/lib/supabase";
 import { MARQUEE_ITEMS } from "@/lib/data";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request: Request) {
   if (!checkAdminRequest(request)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

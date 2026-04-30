@@ -86,6 +86,7 @@ export async function saveOrder(orderData: {
 }
 
 export async function getOrderById(id: string) {
+  noStore();
   const { data, error } = await supabaseAdmin
     .from("orders")
     .select("*")
@@ -97,6 +98,7 @@ export async function getOrderById(id: string) {
 }
 
 export async function getAllOrders() {
+  noStore();
   const { data, error } = await supabaseAdmin
     .from("orders")
     .select("*")
@@ -186,6 +188,7 @@ export async function decrementProductQuantities(
 }
 
 export async function getSiteContent(key: string) {
+  noStore();
   const { data } = await supabaseAdmin
     .from("site_content")
     .select("value")

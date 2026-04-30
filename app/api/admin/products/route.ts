@@ -3,6 +3,8 @@ import { checkAdminRequest } from "@/lib/admin-auth";
 import { PRODUCTS } from "@/lib/data";
 import { getProductOverrides, upsertProductOverride } from "@/lib/supabase";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request: Request) {
   if (!checkAdminRequest(request)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

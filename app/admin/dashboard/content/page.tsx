@@ -9,7 +9,7 @@ export default function ContentAdmin() {
   const [newItem, setNewItem] = useState("");
 
   useEffect(() => {
-    fetch("/api/admin/content")
+    fetch("/api/admin/content", { cache: "no-store" })
       .then((r) => r.json())
       .then((d) => {
         setMarquee(d.marquee || []);
