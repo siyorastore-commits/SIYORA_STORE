@@ -85,4 +85,36 @@ export interface Order {
   razorpay_payment_id?: string;
   payment_status: "pending" | "paid" | "failed" | "cod_pending";
   order_status: "confirmed" | "processing" | "shipped" | "delivered";
+  user_id?: string;
+}
+
+export interface SiyoraUser {
+  id: string;
+  phone: string;
+  name: string | null;
+  email: string | null;
+  siyora_stars: number;
+  created_at: string;
+}
+
+export interface StarTransaction {
+  id: string;
+  user_id: string;
+  delta: number;
+  reason: "signup_bonus" | "order_placed" | "redeemed";
+  order_id: string | null;
+  created_at: string;
+}
+
+export interface QuizResponse {
+  id?: string;
+  user_id?: string;
+  phone: string;
+  q1: string | null;
+  q2: string | null;
+  q3: string | null;
+  q4: string | null;
+  q5: string | null;
+  completed: boolean;
+  created_at?: string;
 }

@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 interface Order {
   id: string;
@@ -26,15 +27,21 @@ const STATUS_COLORS: Record<string, string> = {
 
 export default function DashboardOverview() {
   const [orders, setOrders] = useState<Order[]>([]);
+  const [userStats, setUserStats] = useState({ total: 0, starsAwarded: 0 });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/admin/orders", { cache: "no-store" })
-      .then((r) => r.json())
-      .then((d) => {
-        setOrders(d.orders || []);
-        setLoading(false);
+    Promise.all([
+      fetch("/api/admin/orders", { cache: "no-store" }).then((r) => r.json()),
+      fetch("/api/admin/users", { cache: "no-store" }).then((r) => r.json()),
+    ]).then(([ordersData, usersData]) => {
+      setOrders(ordersData.orders || []);
+      setUserStats({
+        total: (usersData.users || []).length,
+        starsAwarded: usersData.starSummary?.totalAwarded || 0,
       });
+      setLoading(false);
+    });
   }, []);
 
   const paid = orders.filter((o) => o.payment_status === "paid");
@@ -46,9 +53,11 @@ export default function DashboardOverview() {
 
   const stats = [
     { label: "Total Orders", value: orders.length, color: "#E91E8C" },
-    { label: "Revenue", value: `₹${revenue.toLocaleString("en-IN")}`, color: "#16a34a" },
+    { label: "Revenue", value: `₹${(revenue / 100).toLocaleString("en-IN")}`, color: "#16a34a" },
     { label: "Paid Orders", value: paid.length, color: "#2563eb" },
     { label: "Pending", value: pending.length, color: "#d97706" },
+    { label: "Members", value: userStats.total, color: "#c8956c", href: "/admin/dashboard/users" },
+    { label: "Stars Awarded", value: userStats.starsAwarded, color: "#7c3aed", href: "/admin/dashboard/users" },
   ];
 
   return (
@@ -81,27 +90,29 @@ export default function DashboardOverview() {
               marginBottom: 40,
             }}
           >
-            {stats.map((s) => (
-              <div
-                key={s.label}
-                style={{
-                  background: "#fff",
-                  borderRadius: 12,
-                  padding: "24px 20px",
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-                  borderTop: `3px solid ${s.color}`,
-                }}
-              >
-                <div
-                  style={{ fontSize: 28, fontWeight: 700, color: s.color, fontFamily: "var(--serif)" }}
-                >
-                  {s.value}
-                </div>
-                <div style={{ fontSize: 12, color: "#7A5555", marginTop: 4, fontWeight: 500 }}>
-                  {s.label}
-                </div>
-              </div>
-            ))}
+            {stats.map((s) => {
+              const inner = (
+                <>
+                  <div style={{ fontSize: 28, fontWeight: 700, color: s.color, fontFamily: "var(--serif)" }}>
+                    {s.value}
+                  </div>
+                  <div style={{ fontSize: 12, color: "#7A5555", marginTop: 4, fontWeight: 500 }}>
+                    {s.label}
+                  </div>
+                </>
+              );
+              const cardStyle = {
+                background: "#fff", borderRadius: 12, padding: "24px 20px",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.06)", borderTop: `3px solid ${s.color}`,
+                textDecoration: "none", display: "block",
+                transition: "box-shadow 0.15s",
+              };
+              return (s as any).href ? (
+                <Link key={s.label} href={(s as any).href} style={cardStyle}>{inner}</Link>
+              ) : (
+                <div key={s.label} style={cardStyle}>{inner}</div>
+              );
+            })}
           </div>
 
           {/* Recent orders */}

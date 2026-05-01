@@ -1,9 +1,10 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { verifyRazorpaySignature } from "@/lib/razorpay";
-import { updateOrderAfterPayment, decrementProductQuantities } from "@/lib/supabase";
+import { updateOrderAfterPayment, decrementProductQuantities, awardStars, getUserByPhone } from "@/lib/supabase";
 import { sendOrderConfirmationEmail } from "@/lib/resend";
+import { verifyUserSession, USER_COOKIE } from "@/lib/user-auth";
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     const {
       razorpay_order_id,
@@ -53,6 +54,33 @@ export async function POST(req: Request) {
     decrementProductQuantities(orderItems).catch((err) =>
       console.error("Quantity decrement failed:", err)
     );
+
+    // Stars: deduct redeemed stars then award +25 for placing order (non-blocking)
+    const userToken = req.cookies.get(USER_COOKIE)?.value;
+    const userSession = userToken ? verifyUserSession(userToken) : null;
+
+    const resolveUserId = async (): Promise<string | null> => {
+      if (userSession) return userSession.userId;
+      if (orderData.customer_phone) {
+        const u = await getUserByPhone(orderData.customer_phone).catch(() => null);
+        return u?.id ?? null;
+      }
+      return null;
+    };
+
+    resolveUserId().then((userId) => {
+      if (!userId) return;
+      const chain: Promise<any>[] = [];
+      // Deduct redeemed stars first
+      if (orderData.stars_applied && orderData.stars_used > 0) {
+        chain.push(awardStars(userId, -orderData.stars_used, "redeemed", savedOrder.id));
+      }
+      // Award +25 for placing the order
+      chain.push(Promise.all(chain).then(() =>
+        awardStars(userId, 25, "order_placed", savedOrder.id)
+      ));
+      return Promise.all(chain);
+    }).catch((err) => console.error("Stars update failed:", err));
 
     // Send confirmation email (non-blocking)
     sendOrderConfirmationEmail({

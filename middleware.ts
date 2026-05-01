@@ -11,9 +11,16 @@ export function middleware(request: NextRequest) {
     }
   }
 
+  if (pathname.startsWith("/account")) {
+    const session = request.cookies.get("siyora_user_session");
+    if (!session?.value) {
+      return NextResponse.redirect(new URL("/login?redirect=/account", request.url));
+    }
+  }
+
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: "/admin/:path*",
+  matcher: ["/admin/:path*", "/account/:path*"],
 };

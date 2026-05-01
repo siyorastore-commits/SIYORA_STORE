@@ -187,6 +187,186 @@ export async function decrementProductQuantities(
   }
 }
 
+// ─── USER HELPERS ─────────────────────────────────────────────────────────────
+
+export async function getUserByPhone(phone: string) {
+  const { data } = await supabaseAdmin
+    .from("users")
+    .select("*")
+    .eq("phone", phone)
+    .maybeSingle();
+  return data;
+}
+
+export async function createUser(phone: string) {
+  const { data, error } = await supabaseAdmin
+    .from("users")
+    .insert([{ phone, siyora_stars: 50 }])
+    .select()
+    .single();
+  if (error) throw new Error(error.message);
+  // Record signup bonus transaction
+  await supabaseAdmin.from("star_transactions").insert([{
+    user_id: data.id,
+    delta: 50,
+    reason: "signup_bonus",
+    order_id: null,
+  }]);
+  return data;
+}
+
+export async function getUserById(userId: string) {
+  const { data } = await supabaseAdmin
+    .from("users")
+    .select("*")
+    .eq("id", userId)
+    .maybeSingle();
+  return data;
+}
+
+export async function awardStars(userId: string, delta: number, reason: string, orderId?: string) {
+  // Increment stars balance
+  const { data: user } = await supabaseAdmin
+    .from("users")
+    .select("siyora_stars")
+    .eq("id", userId)
+    .single();
+  if (!user) return;
+
+  await supabaseAdmin
+    .from("users")
+    .update({ siyora_stars: Math.max(0, (user.siyora_stars || 0) + delta) })
+    .eq("id", userId);
+
+  await supabaseAdmin.from("star_transactions").insert([{
+    user_id: userId,
+    delta,
+    reason,
+    order_id: orderId || null,
+  }]);
+}
+
+export async function getStarTransactions(userId: string) {
+  noStore();
+  const { data } = await supabaseAdmin
+    .from("star_transactions")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+  return data || [];
+}
+
+export async function getUserOrders(userId: string) {
+  noStore();
+  const { data } = await supabaseAdmin
+    .from("orders")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+  return data || [];
+}
+
+export async function getAllUsers() {
+  noStore();
+  const { data, error } = await supabaseAdmin
+    .from("users")
+    .select("*")
+    .order("created_at", { ascending: false });
+  if (error) throw new Error(error.message);
+  return data || [];
+}
+
+export async function getUserStarSummary() {
+  noStore();
+  const { data } = await supabaseAdmin
+    .from("star_transactions")
+    .select("delta, reason");
+  if (!data) return { totalAwarded: 0, totalRedeemed: 0 };
+  const totalAwarded = data.filter(t => t.delta > 0).reduce((s, t) => s + t.delta, 0);
+  const totalRedeemed = data.filter(t => t.delta < 0).reduce((s, t) => s + Math.abs(t.delta), 0);
+  return { totalAwarded, totalRedeemed };
+}
+
+export async function getUserWithOrders(userId: string) {
+  noStore();
+  const [userRes, ordersRes, txRes, quizRes] = await Promise.all([
+    supabaseAdmin.from("users").select("*").eq("id", userId).single(),
+    supabaseAdmin.from("orders").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
+    supabaseAdmin.from("star_transactions").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
+    supabaseAdmin.from("quiz_responses").select("*").eq("user_id", userId).order("created_at", { ascending: false }).limit(1),
+  ]);
+  return {
+    user: userRes.data,
+    orders: ordersRes.data || [],
+    transactions: txRes.data || [],
+    quiz: quizRes.data?.[0] || null,
+  };
+}
+
+export async function updateUserProfile(userId: string, name: string, email?: string) {
+  const patch: Record<string, string> = { name };
+  if (email) patch.email = email;
+  const { data, error } = await supabaseAdmin
+    .from("users")
+    .update(patch)
+    .eq("id", userId)
+    .select()
+    .single();
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function linkOrdersToUser(phone: string, userId: string) {
+  // Try both "+91XXXXXXXXXX" and bare "XXXXXXXXXX" to handle checkout stripping the prefix
+  const withPrefix = phone.startsWith("+91") ? phone : `+91${phone}`;
+  const withoutPrefix = phone.startsWith("+91") ? phone.slice(3) : phone;
+
+  for (const p of [withPrefix, withoutPrefix]) {
+    await supabaseAdmin
+      .from("orders")
+      .update({ user_id: userId })
+      .eq("customer_phone", p)
+      .is("user_id", null);
+  }
+}
+
+// ─── OTP SESSION HELPERS ───────────────────────────────────────────────────────
+
+export async function saveOTPSession(phone: string, otpHash: string, expiresAt: string) {
+  await supabaseAdmin
+    .from("otp_sessions")
+    .upsert({ phone, otp_hash: otpHash, expires_at: expiresAt });
+}
+
+export async function getOTPSession(phone: string) {
+  const { data } = await supabaseAdmin
+    .from("otp_sessions")
+    .select("*")
+    .eq("phone", phone)
+    .maybeSingle();
+  return data;
+}
+
+export async function deleteOTPSession(phone: string) {
+  await supabaseAdmin.from("otp_sessions").delete().eq("phone", phone);
+}
+
+// ─── QUIZ HELPERS ──────────────────────────────────────────────────────────────
+
+export async function saveQuizResponse(payload: {
+  user_id?: string;
+  phone: string;
+  q1: string | null;
+  q2: string | null;
+  q3: string | null;
+  q4: string | null;
+  q5: string | null;
+  completed: boolean;
+}) {
+  const { error } = await supabaseAdmin.from("quiz_responses").insert([payload]);
+  if (error) throw new Error(error.message);
+}
+
 export async function getSiteContent(key: string) {
   noStore();
   const { data } = await supabaseAdmin
@@ -225,14 +405,63 @@ create table orders (
   razorpay_order_id text,
   razorpay_payment_id text,
   payment_status text default 'pending',
-  order_status text default 'confirmed'
+  order_status text default 'confirmed',
+  user_id uuid references users(id)
 );
 
 -- Enable Row Level Security
 alter table orders enable row level security;
+create policy "Allow server inserts" on orders for insert with check (true);
 
--- Allow insert from API (server-side only via service_role key)
-create policy "Allow server inserts" on orders
-  for insert with check (true);
+-- ─── NEW TABLES FOR AUTH + STARS ───────────────────────────────────────────
+
+-- Add user_id to existing orders table (if orders already exists):
+alter table orders add column if not exists user_id uuid references users(id);
+
+create table users (
+  id uuid default gen_random_uuid() primary key,
+  phone text unique not null,
+  name text,
+  email text,
+  siyora_stars integer default 50 not null,
+  created_at timestamp with time zone default now()
+);
+alter table users enable row level security;
+create policy "Server full access on users" on users using (true) with check (true);
+
+create table star_transactions (
+  id uuid default gen_random_uuid() primary key,
+  user_id uuid references users(id) not null,
+  delta integer not null,
+  reason text not null,
+  order_id uuid references orders(id),
+  created_at timestamp with time zone default now()
+);
+alter table star_transactions enable row level security;
+create policy "Server full access on star_transactions" on star_transactions using (true) with check (true);
+
+create table otp_sessions (
+  phone text primary key,
+  otp_hash text not null,
+  expires_at timestamp with time zone not null,
+  created_at timestamp with time zone default now()
+);
+alter table otp_sessions enable row level security;
+create policy "Server full access on otp_sessions" on otp_sessions using (true) with check (true);
+
+create table quiz_responses (
+  id uuid default gen_random_uuid() primary key,
+  user_id uuid references users(id),
+  phone text not null,
+  q1 text,
+  q2 text,
+  q3 text,
+  q4 text,
+  q5 text,
+  completed boolean default false,
+  created_at timestamp with time zone default now()
+);
+alter table quiz_responses enable row level security;
+create policy "Server full access on quiz_responses" on quiz_responses using (true) with check (true);
 ─────────────────────────────────────────────────────────────────────────────
 */
