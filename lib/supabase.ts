@@ -24,6 +24,7 @@ export async function createPendingOrder(orderData: {
   items: object[];
   total_amount: number;
   razorpay_order_id: string;
+  instagram_username?: string;
 }) {
   const { data, error } = await supabaseAdmin
     .from("orders")

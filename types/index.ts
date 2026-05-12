@@ -65,6 +65,7 @@ export interface OrderForm {
   city: string;
   state: string;
   pincode: string;
+  instagram_username?: string;
 }
 
 export interface Order {

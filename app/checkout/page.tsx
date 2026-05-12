@@ -63,13 +63,7 @@ export default function CheckoutPage() {
   const grandTotal = cartTotal + shipping;
 
   const [form, setForm] = useState<OrderForm>({
-    name: "",
-    email: "",
-    phone: "",
-    address: "",
-    city: "",
-    state: "Maharashtra",
-    pincode: "",
+    name: "", email: "", phone: "", address: "", city: "", state: "Maharashtra", pincode: "", instagram_username: "",
   });
   const [errors, setErrors] = useState<
     Partial<Record<keyof OrderForm, string>>
@@ -106,6 +100,7 @@ export default function CheckoutPage() {
       },
       items: cartItems,
       total_amount: grandTotal,
+      ...(form.instagram_username?.trim() && { instagram_username: form.instagram_username.trim().replace(/^@/, "") }),
     };
 
     try {
@@ -323,6 +318,23 @@ export default function CheckoutPage() {
                       <option key={s}>{s}</option>
                     ))}
                   </select>
+                </div>
+
+                {/* Instagram — optional */}
+                <div style={{ gridColumn: "1 / -1", display: "flex", flexDirection: "column", gap: 6 }}>
+                  <label className="form-label" style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    Instagram Username
+                    <span style={{ fontSize: 11, color: "var(--muted)", fontWeight: 400 }}>(optional)</span>
+                  </label>
+                  <div style={{ position: "relative" }}>
+                    <span style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", fontSize: 14, color: "var(--muted)", pointerEvents: "none", userSelect: "none" }}>@</span>
+                    <input
+                      className="form-input" type="text" placeholder="your.username"
+                      value={form.instagram_username} onChange={(e) => update("instagram_username", e.target.value)}
+                      style={{ paddingLeft: 28 }}
+                    />
+                  </div>
+                  <span style={{ fontSize: 11, color: "var(--muted)" }}>So we can tag or reach out to you on Instagram</span>
                 </div>
               </div>
             </motion.div>
